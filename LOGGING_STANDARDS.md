@@ -2,7 +2,7 @@
 This section provides standards that govern the logged outputs and tunable numbers in robot code.
 
 ## Recording Outputs
-Any values that need to be published over [NetworkTables](https://docs.wpilib.org/en/stable/docs/software/networktables/networktables-intro.html) for viewing on [Shuffleboard](https://docs.wpilib.org/en/stable/docs/software/dashboards/shuffleboard/index.html) or other [WPIlib](https://github.com/wpilibsuite/allwpilib) tools, should be published through the [Advantage Kit Logger](https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/docs/RECORDING-OUTPUTS.md).
+Any values that need to be published over [NetworkTables](https://docs.wpilib.org/en/stable/docs/software/networktables/networktables-intro.html) for viewing on [Shuffleboard](https://docs.wpilib.org/en/stable/docs/software/dashboards/shuffleboard/index.html) or other [WPIlib](https://github.com/wpilibsuite/allwpilib) tools, should be published through the [AdvantageKit Logger](https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/docs/RECORDING-OUTPUTS.md).
 
 ### Formatting
 The keys for each recorded output should be:

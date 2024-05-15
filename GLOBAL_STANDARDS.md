@@ -3,8 +3,8 @@ This section provides standards that govern the setup and maintence of robot cod
 
 ## Global Dependencies
 * [WPIlib](https://github.com/wpilibsuite/allwpilib) is the framework that teams use to write code for FRC robots.
-* [Advantage Kit](https://github.com/Mechanical-Advantage/AdvantageKit) is a logging framework created by [FRC team 6328](https://www.thebluealliance.com/team/6328/) which has been released for public use.
-* [Gversion](https://github.com/lessthanoptimal/gversion-plugin) is an [Advantage Kit](https://github.com/Mechanical-Advantage/AdvantageKit) dependency that creates the [```BuildConstants.java```](BuildConstants.java) file which is important for log replay.
+* [AdvantageKit](https://github.com/Mechanical-Advantage/AdvantageKit) is a logging framework created by [FRC team 6328](https://www.thebluealliance.com/team/6328/) which has been released for public use.
+* [Gversion](https://github.com/lessthanoptimal/gversion-plugin) is an [AdvantageKit](https://github.com/Mechanical-Advantage/AdvantageKit) dependency that creates the [```BuildConstants.java```](BuildConstants.java) file which is important for log replay.
 * [Lombok](https://projectlombok.org/) is an annotation based java library that helps reduce boilerplate code by automatically generating getters, setters, etc.
 * [Spotless](https://github.com/diffplug/spotless) is a code formatter that automatically formats the entire project when compiled.
 
