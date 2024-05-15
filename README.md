@@ -18,6 +18,6 @@ We encourage all team members to actively contribute to the evolution of our cod
 * [Global Standards](GLOBAL_STANDARDS.md)
 * [Constants Standards](CONSTANTS_STANDARDS.md)
 * [Logging Standards](LOGGING_STANDARDS.md)
-* [Advantage Kit Standards](ADVANTAGE_KIT_STANDARDS.md)
+* [AdvantageKit Standards](ADVANTAGEKIT_STANDARDS.md)
 * [Subsystem Standards](SUBSYSTEM_STANDARDS.md)
 * [Command Standards](COMMANDS_STANDARDS.md)

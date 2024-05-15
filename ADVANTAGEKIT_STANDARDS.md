@@ -1,4 +1,4 @@
-# Advantage Kit Standards
+# AdvantageKit Standards
 This section provides standards that govern the IO inputs and implementations in robot projects.
 
 ## IO Interfaces and Inputs
