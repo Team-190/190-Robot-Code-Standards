@@ -10,7 +10,7 @@ The purpose of this repository is to establish a set of standards and convention
 * Cultivate a culture of excellence and professionalism in our software development efforts.
 
 ## How to Use This Repository
-In this repository, you will find detailed guidelines covering various aspects of coding standards, including naming conventions, formatting rules, documentation practices, and more.
+In this repository, you will find detailed guidelines covering various aspects of coding standards, including naming conventions, formatting rules, documentation practices, and more. When refactoring robot code, it is important to go through class by class and make sure each one is up to each of the standards listed below.
 
 We encourage all team members to actively contribute to the evolution of our code standards by suggesting improvements, reporting issues, or proposing new guidelines through the repository's issue tracker and pull request mechanism. Together, we can continuously refine our practices and elevate the quality of our codebase.
 
@@ -18,6 +18,6 @@ We encourage all team members to actively contribute to the evolution of our cod
 * [Global Standards](GLOBAL_STANDARDS.md)
 * [Constants Standards](CONSTANTS_STANDARDS.md)
 * [Logging Standards](LOGGING_STANDARDS.md)
-* [Advantage Kit Standards](ADVANTAGE_KIT_STANDARDS.md)
+* [AdvantageKit Standards](ADVANTAGEKIT_STANDARDS.md)
 * [Subsystem Standards](SUBSYSTEM_STANDARDS.md)
 * [Command Standards](COMMANDS_STANDARDS.md)
