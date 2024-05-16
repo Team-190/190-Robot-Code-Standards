@@ -63,7 +63,7 @@ Composite commands reside in their own class called ```CompositeCommands.java```
 ex. ([```CompositeCommands.java```](https://github.com/Team-190/2k24-Robot-Code/blob/main/src/main/java/frc/robot/commands/CompositeCommands.java) from FRC 190 2024 robot, Snapback)
 
 ## Button Bindings and Triggers
-Commands tell the robot to execute tasks, but in order for the robot code to schedule the command for execution, it needs to be bound to a [Trigger](https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html). Triggers tell the robot which conditions need to be met to execute commands.
+Commands tell the robot to execute tasks, but in order for the robot code to schedule the command for execution, it needs to be bound to a [Trigger](https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html). Triggers tell the robot which conditions need to be met to execute commands. Triggers are always instantiated in the ```configureButtonBindings()``` method of ```RobotContainer.java```.
 
 ex. (Shoot button binding on FRC 190 2024 robot, Snapback)
 ```java
@@ -77,7 +77,7 @@ driver
 
 in this case, ```rightBumper()``` is the trigger representing the right bumper button on the driver's Xbox 360 controller. The ```.and()``` call adds another condition to the trigger. The ```.whileTrue()``` call means that the robot trigger will only run the command while the conditions of the trigger are met. This trigger made the robot only able to shoot when the driver pressed the right bumper and when the robot code reported the shooter was ready to fire.
 
-It is worth noting that Triggers can be arbitrary by creating a new trigger object and binding it to an event, which can then be passed into a command as a parameter.
+It is worth noting that Triggers can be arbitrary by creating a new Trigger object and binding it to an event, which can then be passed into a command as a parameter.
 
 ex.
 ```java
@@ -85,6 +85,20 @@ Trigger arbitraryTrigger = new Trigger(limitSwitch::get)
 ```
 
 However, this usually isn't necessary because required subsystems get passed into composite commands, meaning there usually isn't a reason to bind command to a trigger unless it's being bound to a button.
+
+Arbitrary Triggers are most useful when a condition must be met across a wide number of commands.
+
+ex. (Shoot button binding with arbitrary trigger on FRC 190 2024 robot, Snapback)
+```java
+Trigger shooterReady = new Trigger(() -> RobotState.shooterReady(hood, shooter))
+
+driver
+        .rightBumper()
+        .and(shooterReady)
+        .whileTrue(
+            Commands.waitSeconds(0.25)
+                .andThen(CompositeCommands.getShootCommand(intake, serializer, kicker)));
+```
 
 ## Autonomous Routines
 Autonomous routines are simply composite command that are called during autonomous. Autonomous paths are loaded into the roborio when the code is deployed, and called during the autonomous period. We can follow a path using its path on the roborio.
