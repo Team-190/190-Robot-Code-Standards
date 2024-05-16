@@ -2,7 +2,7 @@
 This section provides standards that govern the Commands and autonomous routines in robot projects.
 
 ## Subsystem Commands
-In order for a subsystem to be useful, they must be told to do something, this is what commands are for. Subsystems tell the actuators how to do something (ex. run at a voltage, follow a motion profile, account for feedback, etc.) while commands tell the robot when execute those tasks.
+In order for a subsystem to be useful, they must be told to do something, this is what commands are for. Subsystems tell the actuators how to do something (ex. run at a voltage, follow a motion profile, account for feedback, etc.) while commands tell the robot to actually execute the tasks.
 
 Simple commands that only require one subsystem are located in that subsystem.
 
@@ -61,6 +61,30 @@ public static final Command getCollectCommand(Intake intake, Serializer serializ
 Composite commands reside in their own class called ```CompositeCommands.java```.
 
 ex. ([```CompositeCommands.java```](https://github.com/Team-190/2k24-Robot-Code/blob/main/src/main/java/frc/robot/commands/CompositeCommands.java) from FRC 190 2024 robot, Snapback)
+
+## Button Bindings and Triggers
+Commands tell the robot to execute tasks, but in order for the robot code to schedule the command for execution, it needs to be bound to a [Trigger](https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html). Triggers tell the robot which conditions need to be met to execute commands.
+
+ex. (Shoot button binding on FRC 190 2024 robot, Snapback)
+```java
+driver
+        .rightBumper()
+        .and(() -> RobotState.shooterReady(hood, shooter))
+        .whileTrue(
+            Commands.waitSeconds(0.25)
+                .andThen(CompositeCommands.getShootCommand(intake, serializer, kicker)));
+```
+
+in this case, ```rightBumper()``` is the trigger representing the right bumper button on the driver's Xbox 360 controller. The ```.and()``` call adds another condition to the trigger. The ```.whileTrue()``` call means that the robot trigger will only run the command while the conditions of the trigger are met. This trigger made the robot only able to shoot when the driver pressed the right bumper and when the robot code reported the shooter was ready to fire.
+
+It is worth noting that Triggers can be arbitrary by creating a new trigger object and binding it to an event, which can then be passed into a command as a parameter.
+
+ex.
+```java
+Trigger arbitraryTrigger = new Trigger(limitSwitch::get)
+```
+
+However, this usually isn't necessary because required subsystems get passed into composite commands, meaning there usually isn't a reason to bind command to a trigger unless it's being bound to a button.
 
 ## Autonomous Routines
 Autonomous routines are simply composite command that are called during autonomous. Autonomous paths are loaded into the roborio when the code is deployed, and called during the autonomous period. We can follow a path using its path on the roborio.
