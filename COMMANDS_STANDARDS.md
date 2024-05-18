@@ -106,7 +106,7 @@ Autonomous routines are simply composite command that are called during autonomo
 ex. (Center Two Piece autonomous routine from FRC 190 2024 robot, Snapback)
 
 ```java
-private static final Command centerTwoPiece(
+public static final Command centerTwoPiece(
       Drive drive, Intake intake, Serializer serializer, Kicker kicker, TrackingMode targetType) {
     return Commands.sequence(
         AutoBuilder.followPath(PathPlannerPath.fromPathFile("deploy/paths/Center to Center Wing Note")),

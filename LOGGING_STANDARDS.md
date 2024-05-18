@@ -19,7 +19,7 @@ Logger.recordOutput("Intake/Has Game Piece", sensor.get());
 ```
 
 ## Tunable Numbers
-Tunable numbers are the way that 190 tunes constants without having to re-deploy code. Becuase tunable numbers are just tunable constants, they should be located in their respective subsystem's constants file. Tunable numbers follow the same formatting guidelines as recorded outputs:
+Tunable numbers are the way that 190 tunes constants without having to re-deploy code. Because tunable numbers are just tunable constants, they should be located in their respective subsystem's constants file. Tunable numbers follow the same formatting guidelines as recorded outputs:
 
 ex.
 
@@ -34,3 +34,5 @@ static {
     DRIVE_KP.initDefault(0.0);
 }
 ```
+
+Tunable numbers can be tuned over NetworkTables when the ```TUNING_MODE``` variable in ```Constants.java``` is set to true.
