@@ -25,3 +25,4 @@ We encourage all team members to actively contribute to the evolution of our cod
 * [Subsystem Standards](SUBSYSTEM_STANDARDS.md)
 * [Command Standards](COMMANDS_STANDARDS.md)
 * [Control Loop Standards](CONTROL_LOOP_STANDARDS.md)
+* [```RobotState.java``` Standards](ROBOTSTATE_STANDARDS.md)
