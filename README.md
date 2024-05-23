@@ -15,7 +15,7 @@ In this repository, you will find detailed guidelines covering various aspects o
 We encourage all team members to actively contribute to the evolution of our code standards by suggesting improvements, reporting issues, or proposing new guidelines through the repository's issue tracker and pull request mechanism. Together, we can continuously refine our practices and elevate the quality of our codebase.
 
 ## Robots Implemented
-* FRC 190 2024 robot, [Snapback](https://github.com/Team-190/2k23-offseason-bot)
+* FRC 190 2024 robot, [Snapback](https://github.com/Team-190/2k24-Offseason-Code/tree/localization-multi-camera)
 
 ## Table of Contents
 * [Global Standards](GLOBAL_STANDARDS.md)
