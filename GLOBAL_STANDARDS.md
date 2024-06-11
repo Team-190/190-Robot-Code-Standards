@@ -42,16 +42,20 @@ Member variables should always be private with ```@Getter```/```@Setter``` annot
 Constants should always have the ```public static final``` modifiers.
 
 ## Default Units
-190 uses a couple of default units for all robot code:
+190 uses these default units for all robot code:
 
 Measurement | Unit
 ------------|------
 |Linear Position|Meters|
 |Linear Velocity|Meters per Second|
+|Linear Acceleration|Meters per Second Squared|
 |Angluar Position|Radians|
 |Angular Velocity|Radians per Second|
+|Angular Acceleration|Radians per Second Squared|
+|Mass|Kilograms|
+|Moment of Inertia|Kilogram Meters Squared|
 |Force|Netwons|
-|Weight|Kilograms|
+|Torque/Moment|Newton Meters|
 |Voltage|Volts|
 |Current|Amps|
 |Temperature|Celcius|
