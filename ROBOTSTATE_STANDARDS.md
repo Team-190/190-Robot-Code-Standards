@@ -138,24 +138,24 @@ operator.leftBumper().onTrue(CompositeCommands.decreaseHoodAngle());
 operator.leftTrigger().onTrue(CompositeCommands.increaseHoodAngle());
 ```
 
-## Periodic Pose Estimation and ShotCache
+## Periodic Pose Estimation and ControlData
 Periodically on the robot, the ```RobotState.java``` class takes all the information in from its suppliers, and calculates everything the robot needs to know. For example:
 * Hood Angle
 * Flywheel Speed
 * Effective Aiming Pose (for shooting on the move)
 
-This data is calculated, and stored in a record called ```ShotCache```:
+This data is calculated, and stored in a record called ```ControlData```:
 
-ex. (```ShotCache``` from FRC 190 2024 robot, Snapback)
+ex. (```ControlData``` from FRC 190 2024 robot, Snapback)
 ```java
-public static record ShotCache(
+public static record ControlData(
       Rotation2d robotAngle,
       double radialVelocity,
       double shooterSpeed,
       Rotation2d shooterAngle) {}
 ```
 
-```RobotState.java``` contains an instance of ```ShotCache``` as a member variable, which is updated in the periodic method, along with the pose estimator:
+```RobotState.java``` contains an instance of ```ControlData``` as a member variable, which is updated in the periodic method, along with the pose estimator:
 
 ```java
 public static void periodic() {
@@ -199,8 +199,8 @@ public static void periodic() {
     double tangentialVelocity =
         -robotFieldRelativeVelocitySupplier.get().rotateBy(setpointAngle.unaryMinus()).getY();
     double radialVelocity = tangentialVelocity / effectiveDistanceToSpeaker;
-    shotCache =
-        new ShotCache(
+    controlData =
+        new ControlData(
             setpointAngle,
             radialVelocity,
             shooterSpeedMap.get(effectiveDistanceToSpeaker),
@@ -209,11 +209,11 @@ public static void periodic() {
     Logger.recordOutput("RobotState/Primary Poses", visionPrimaryPosesSupplier.get());
     Logger.recordOutput("RobotState/Secondary Pose", visionSecondaryPosesSupplier.get());
     Logger.recordOutput("RobotState/Estimated Pose", poseEstimator.getEstimatedPosition());
-    Logger.recordOutput("RobotState/ShotCache/Robot Angle Setpoint", setpointAngle);
+    Logger.recordOutput("RobotState/ControlData/Robot Angle Setpoint", setpointAngle);
     Logger.recordOutput(
-        "RobotState/ShotCache/Effective Distance to Speaker", effectiveDistanceToSpeaker);
+        "RobotState/ControlData/Effective Distance to Speaker", effectiveDistanceToSpeaker);
     Logger.recordOutput(
-        "RobotState/ShotCache/Effective Aiming Pose",
+        "RobotState/ControlData/Effective Aiming Pose",
         new Pose2d(effectiveAimingPose, new Rotation2d()));
   }
 ```
