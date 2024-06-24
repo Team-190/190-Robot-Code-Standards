@@ -63,7 +63,7 @@ ex. (```RobotState.java``` construction in ```RobotContainer.java``` for FRC 190
 
 // ...
 ```
-## Interpolation Maps
+## Interpolation Maps and Shot Compensation
 For shooting games, interpolating hoods and flywheels are very important to dynamically adjust the robot's shot. This is all done in ```RobotState.java```.
 
 All interpolation map values are added in a static block:
@@ -101,7 +101,6 @@ static {
 }
 ```
 
-## Shot Compensation
 Because of the 1/2" field tolerance, each FRC field can be different, therefore it is paramount that there be a method for adjusting shots on the fly.
 
 ex. (Shot compensation for FRC 190 2024 robot, Snapback)
