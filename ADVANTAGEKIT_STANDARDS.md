@@ -9,7 +9,8 @@ The fields that 190 logs in every subsystem's IO interface depends on the hardwa
     * Position ([Rotation2d](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/transformations.html#rotation2d))
     * Velocity (Radians/Second)
     * Applied Voltage (Volts)
-    * Current (Amps)
+    * Supply Current (Amps)
+    * Stator Current (Amps)
     * Temperature (Celcius)
 * Pneumatic Actuators:
     * Position (boolean, true if extended, false if retracted)
@@ -32,7 +33,8 @@ public interface IntakeIO {
     public Rotation2d rollersPosition = Rotation2d.fromRadians(0.0);
     public double rollersVelocityRadPerSec = 0.0;
     public double rollersAppliedVolts = 0.0;
-    public double rollersCurrentAmps = 0.0;
+    public double rollersSupplyCurrentAmps = 0.0;
+    public double rollersStatorCurrentAmps = 0.0;
     public double rollersTempCelcius = 0.0;
 
     public boolean leftPosition = false;
@@ -81,7 +83,8 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Double> rollersPosition;
   private final StatusSignal<Double> rollersVelocity;
   private final StatusSignal<Double> rollersAppliedVolts;
-  private final StatusSignal<Double> rollersCurrent;
+  private final StatusSignal<Double> rollersSupplyCurrent;
+  private final StatusSignal<Double> rollersStatorCurrent;
   private final StatusSignal<Double> rollersTemperature;
 
   private final Alert rollersDisconnectedAlert =
@@ -104,12 +107,13 @@ public class IntakeIOTalonFX implements IntakeIO {
     rollersPosition = rollersTalon.getPosition();
     rollersVelocity = rollersTalon.getVelocity();
     rollersAppliedVolts = rollersTalon.getMotorVoltage();
-    rollersCurrent = rollersTalon.getSupplyCurrent();
+    rollersSupplyCurrent = rollersTalon.getSupplyCurrent();
+    rollersStatorCurrent = rollersTalon.getStatorCurrent();
     rollersTemperature = rollersTalon.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(100.0, rollersVelocity);
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, rollersPosition, rollersAppliedVolts, rollersCurrent, rollersTemperature);
+        50.0, rollersPosition, rollersAppliedVolts, rollersSupplyCurrent, rollersStatorCurrent, rollersTemperature);
     rollersTalon.optimizeBusUtilization();
   }
 
@@ -120,7 +124,8 @@ public class IntakeIOTalonFX implements IntakeIO {
                 rollersVelocity,
                 rollersPosition,
                 rollersAppliedVolts,
-                rollersCurrent,
+                rollersSupplyCurrent,
+                rollersStatorCurrent,
                 rollersTemperature)
             .isOK();
     rollersDisconnectedAlert.set(!rollersConnected);
@@ -130,7 +135,8 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.rollersVelocityRadPerSec =
         Units.rotationsToRadians(rollersVelocity.getValueAsDouble()) / IntakeConstants.GEAR_RATIO;
     inputs.rollersAppliedVolts = rollersAppliedVolts.getValueAsDouble();
-    inputs.rollersCurrentAmps = rollersCurrent.getValueAsDouble();
+    inputs.rollersSupplyCurrentAmps = rollersSupplyCurrent.getValueAsDouble();
+    inputs.rollersStatorCurrentAmps = rollersStatorCurrent.getValueAsDouble();
     inputs.rollersTempCelcius = rollersTemperature.getValueAsDouble();
 
     inputs.leftPosition = solenoid.get();
@@ -180,7 +186,7 @@ public class IntakeIOSim implements IntakeIO {
     inputs.rollersPositionRad = Rotation2d.fromRadians(motorSim.getAngularPositionRad());
     inputs.rollersVelocityRadPerSec = motorSim.getAngularVelocityRadPerSec();
     inputs.rollersAppliedVolts = rollersAppliedVolts;
-    inputs.rollersCurrentAmps = Math.abs(motorSim.getCurrentDrawAmps());
+    inputs.rollersSupplyCurrentAmps = Math.abs(motorSim.getCurrentDrawAmps());
     inputs.rollersTempCelcius = 0.0;
 
     inputs.leftPosition = leftPosition;
