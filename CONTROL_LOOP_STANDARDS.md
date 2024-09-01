@@ -107,7 +107,7 @@ profiledFeedback.setGoal(position);
 
 ## Standards
 The standards for control loops are as follows:
-* All gains should be stored as [```TunableNumber```](LOGGING_STANDARDS.md) objects in the appropriate subsystem's constants file.
+* All gains should be stored as [```LoggedTunableNumber```](LOGGING_STANDARDS.md) objects in the appropriate subsystem's constants file.
     * ex. (Hood gains for FRC 190 2024 robot, Snapback)
     ```java
     public static final LoggedTunableNumber KP = new LoggedTunableNumber("Hood/Kp");
@@ -116,6 +116,8 @@ The standards for control loops are as follows:
   public static final LoggedTunableNumber MAX_ACCELERATION = new LoggedTunableNumber("Hood/Max Acceleration");
     ```
     * Make sure to initialize defaults [appropriately](CONSTANTS_STANDARDS.md).
+* For actual hardware, all control loops should be run onboard the motorcontroller. See Pheonix 6/Pro documentation for more details.
+* For simulated hardware, all control loops should use WPILib classes.
 
 ## Tuning Controller Gains
 Figuring out what the value of each gain should be can be challenging, but with a good tuning process, it can be done methodically.
