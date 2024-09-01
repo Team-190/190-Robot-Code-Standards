@@ -9,6 +9,8 @@ This section provides standards that govern how control loops are implemented in
 * Output: The current value of the process variable.
 * Error: setpoint - output, in other words, the difference between where the mechanism is and where it should be.
 
+NOTE: ALL EXAMPLE CODE IN THIS DOCUMENT USE WPILIB CLASSES TO IMPLEMENT CONTROL LOOPS. FOR ACTUAL HARDWARE, IT IS PREFERRED TO RUN CONTROL LOOPS ON THE MOTORCONTROLLER.
+
 ### Feedback Control
 
 Feedback control is a process by which the robot controls its mechanisms while referencing input data from its sensors. With most mechanisms, the goal is to reach the setpoint as fast and accurately as possible. In other words, it tries to reduce the error to 0.
