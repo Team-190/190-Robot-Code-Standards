@@ -16,13 +16,3 @@ We encourage all team members to actively contribute to the evolution of our cod
 
 ## Robots Implemented
 * FRC 190 2024 robot, [Snapback](https://github.com/Team-190/2k24-Offseason-Code/tree/localization-multi-camera)
-
-## Table of Contents
-* [Global Standards](GLOBAL_STANDARDS.md)
-* [Constants Standards](CONSTANTS_STANDARDS.md)
-* [Logging Standards](LOGGING_STANDARDS.md)
-* [AdvantageKit Standards](ADVANTAGEKIT_STANDARDS.md)
-* [Subsystem Standards](SUBSYSTEM_STANDARDS.md)
-* [Command Standards](COMMANDS_STANDARDS.md)
-* [Control Loop Standards](CONTROL_LOOP_STANDARDS.md)
-* [```RobotState.java``` Standards](ROBOTSTATE_STANDARDS.md)
