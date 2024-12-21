@@ -10,26 +10,31 @@ This section provides standards that govern the setup and maintence of robot cod
 
 These dependencies should be present in the [build.gradle](build.gradle) file in each robot project.
 
-## Objects
+## Classes
 ### Naming Conventions
 * Classes and Enumerations should follow PascalCase.
 * Variables should follow camelCase.
 * Constants should follow SNAKE_CASE.
 
-### Instantiation
-Any object that can be instantiated without relying on constructor arguments, (e.g. constants, subsystem inputs, member variables) should be instantiated at declaration. These objects should be declared and instantiated above any variables that require a constructor for instantiation:
+### Object Instantiation
+Objects should be declared and instantiated separately. Static variables should be instantiated in static blocks, while all other variables should be instantiated in a constructor, regardless of reliance on parameters:
 
 ```java
 ...
 
 public class AClass {
 
-  private int variable1 = 0;
-
+  public static int variable1;
   private int variable2;
+  private int variable3;
 
-  public AClass(variable2) {
-    this.variable2 = variable2;
+  static {
+    variable1 = 42;
+  }
+
+  public AClass(variable3) {
+    this.variable2 = 17;
+    this.variable3 = variable3;
   }
 
   ...

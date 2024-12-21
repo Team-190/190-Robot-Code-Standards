@@ -42,8 +42,7 @@ const config: Config = {
     navbar: {
       title: '190 Code Standard',
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        src: 'img/team190_hat_FINAL2.svg',
       },
       items: [
         {

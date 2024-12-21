@@ -2,7 +2,7 @@
 This section provides standards that govern the IO inputs and implementations in robot projects.
 
 ## IO Interfaces and Inputs
-A subsystem's IO interface is what defines the inputs that are automatically logged for that subsystem. It is important to log any information that could be useful in [Log Replay](https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/docs/WHAT-IS-ADVANTAGEKIT.md#example-1-output-logging-in-replay), because any information that is not logged as an input can't be used to create new simulated outputs.
+A subsystem's IO interface is what defines the inputs that are automatically logged for that subsystem. It is important to log any information that could be useful in [Log Replay](https://docs.advantagekit.org/getting-started/what-is-advantagekit/), because any information that is not logged as an input can't be used to create new simulated outputs.
 
 The fields that 190 logs in every subsystem's IO interface depends on the hardware used in that subsystem:
 * Motors:

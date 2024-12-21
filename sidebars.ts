@@ -20,8 +20,9 @@ const sidebars: SidebarsConfig = {
   tutorialSidebar: [
     'README',
     'GLOBAL_STANDARDS',
-    'SUBSYSTEM_STANDARDS',
+    'ROBOT_CODE_OVERVIEW',
     'ADVANTAGEKIT_STANDARDS',
+    'SUBSYSTEM_STANDARDS',
     'COMMANDS_STANDARDS',
     'CONTROL_LOOP_STANDARDS',
     'LOGGING_STANDARDS',
