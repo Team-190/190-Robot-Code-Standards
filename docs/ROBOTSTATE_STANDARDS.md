@@ -1,74 +1,105 @@
 # Robot State Standards
-This section provides standards that govern elements of the robot code that pertain to more than one subsystem.
 
 The ```RobotState.java``` class is used for multiple things:
-* Pose Estimation
-* Interpolation Maps
-* Shot Compensation
+* Localization
+* Global variable mutation
+* Interpolation maps
+
+Essentially, anything that is required by more than one subsystem, goes in ```RobotState.java```
 
 ## Constructing RobotState.java
-One of the purposes of ```RobotState.java``` is to combine odometry and vision data to get a more accurate estimated robot pose. This is done by passing suppliers into the ```RobotState.java``` constructor:
+One of the purposes of ```RobotState.java``` is to combine odometry and vision data to get a more accurate estimated robot pose. This is done by passing data into the ```RobotState.java``` periodic method:
 
-ex. (```RobotState.java``` constructor from FRC 190 2024 robot, Snapback)
-
+Example:
 ```java
-public RobotState(
-      Supplier<Rotation2d> robotHeadingSupplier,
-      Supplier<Translation2d> robotFieldRelativeVelocitySupplier,
-      Supplier<SwerveModulePosition[]> modulePositionSupplier,
-      Supplier<CameraType[]> camerasSupplier,
-      Supplier<Pose3d[]> visionPrimaryPosesSupplier,
-      Supplier<Pose3d[]> visionSecondaryPosesSupplier,
-      Supplier<double[]> visionPrimaryPoseTimestampsSupplier,
-      Supplier<double[]> visionSecondaryPoseTimestampsSupplier) {
-    RobotState.robotHeadingSupplier = robotHeadingSupplier;
-    RobotState.robotFieldRelativeVelocitySupplier = robotFieldRelativeVelocitySupplier;
-    RobotState.modulePositionSupplier = modulePositionSupplier;
-    RobotState.camerasSupplier = camerasSupplier;
-    RobotState.visionPrimaryPosesSupplier = visionPrimaryPosesSupplier;
-    RobotState.visionSecondaryPosesSupplier = visionSecondaryPosesSupplier;
-    RobotState.visionPrimaryPoseTimestampsSupplier = visionPrimaryPoseTimestampsSupplier;
-    RobotState.visionSecondaryPoseTimestampsSupplier = visionSecondaryPoseTimestampsSupplier;
+public static void periodic(
+      Rotation2d robotHeading,
+      long latestRobotHeadingTimestamp,
+      double robotYawVelocity,
+      Translation2d robotFieldRelativeVelocity,
+      SwerveModulePosition[] modulePositions,
+      Camera[] cameras,
+      boolean hasNoteLocked,
+      boolean hasNoteStaged,
+      boolean isIntaking) {
 
-    poseEstimator =
-        new SwerveDrivePoseEstimator(
-            DriveConstants.KINEMATICS,
-            robotHeadingSupplier.get(),
-            modulePositionSupplier.get(),
-            new Pose2d(),
-            DriveConstants.ODOMETRY_STANDARD_DEVIATIONS,
-            VisionConstants.DEFAULT_STANDARD_DEVIATIONS);
-  }
+    RobotState.robotHeading = robotHeading;
+    RobotState.modulePositions = modulePositions;
+
+    odometry.update(robotHeading, modulePositions);
+    poseEstimator.updateWithTime(Timer.getFPGATimestamp(), robotHeading, modulePositions);
+
+    for (Camera camera : cameras) {
+      double[] limelightHeadingData = {
+        robotHeading.minus(headingOffset).getDegrees(), 0.0, 0.0, 0.0, 0.0, 0.0
+      };
+      camera.getRobotHeadingPublisher().set(limelightHeadingData, latestRobotHeadingTimestamp);
+    }
+    NetworkTableInstance.getDefault().flush();
+    for (Camera camera : cameras) {
+
+      if (camera.getTargetAquired()
+          && !GeometryUtil.isZero(camera.getPrimaryPose())
+          && !GeometryUtil.isZero(camera.getSecondaryPose())
+          && Math.abs(robotYawVelocity) <= Units.degreesToRadians(15.0)
+          && Math.abs(robotFieldRelativeVelocity.getNorm()) <= 1.0) {
+        double xyStddevPrimary =
+            camera.getPrimaryXYStandardDeviationCoefficient()
+                * Math.pow(camera.getAverageDistance(), 2.0)
+                / camera.getTotalTargets()
+                * camera.getHorizontalFOV();
+        poseEstimator.addVisionMeasurement(
+            camera.getPrimaryPose(),
+            camera.getFrameTimestamp(),
+            VecBuilder.fill(xyStddevPrimary, xyStddevPrimary, Double.POSITIVE_INFINITY));
+        if (camera.getTotalTargets() > 1) {
+          double xyStddevSecondary =
+              camera.getSecondaryXYStandardDeviationCoefficient()
+                  * Math.pow(camera.getAverageDistance(), 2.0)
+                  / camera.getTotalTargets()
+                  * camera.getHorizontalFOV();
+          poseEstimator.addVisionMeasurement(
+              camera.getSecondaryPose(),
+              camera.getFrameTimestamp(),
+              VecBuilder.fill(xyStddevSecondary, xyStddevSecondary, Double.POSITIVE_INFINITY));
+        }
+      }
+    }
+
+
+    ...
 ```
 
-The constructor should be called in ```RobotContainer.java``` just before the button bindings are configured:
+```periodic()``` should be called in ```RobotContainer.java``` just before the button bindings are configured:
 
-ex. (```RobotState.java``` construction in ```RobotContainer.java``` for FRC 190 2024 robot, Snapback)
+Example:
 
 ```java
-// ...
+...
 
-// Configure RobotState
-    new RobotState(
-        drive::getRotation,
-        drive::getModulePositions,
-        vision::getCameraTypes,
-        vision::getPrimaryVisionPoses,
-        vision::getSecondaryVisionPoses,
-        vision::getPrimaryPoseTimestamps,
-        vision::getSecondaryPoseTimestamps);
+public void robotPeriodic() {
+    RobotState.periodic(
+        drive.getRawGyroRotation(),
+        NetworkTablesJNI.now(),
+        drive.getYawVelocity(),
+        drive.getFieldRelativeVelocity(),
+        drive.getModulePositions(),
+        vision.getCameras(),
+        false,
+        false,
+        false);
 
-    // Configure the button bindings
-    configureButtonBindings();
+        ...
+}
 
-// ...
+...
 ```
 ## Interpolation Maps and Shot Compensation
 For shooting games, interpolating hoods and flywheels are very important to dynamically adjust the robot's shot. This is all done in ```RobotState.java```.
 
 All interpolation map values are added in a static block:
 
-ex. (Interpolation maps from FRC 190 robot, Snapback)
+Example:
 ```java
 static {
     // Units: radians per second
@@ -103,8 +134,7 @@ static {
 
 Because of the 1/2" field tolerance, each FRC field can be different, therefore it is paramount that there be a method for adjusting shots on the fly.
 
-ex. (Shot compensation for FRC 190 2024 robot, Snapback)
-
+Example:
 ```java
 @Getter @Setter private static double flywheelOffset = 0.0;
 @Getter @Setter private static double hoodOffset = 0.0;
@@ -138,81 +168,125 @@ operator.leftTrigger().onTrue(CompositeCommands.increaseHoodAngle());
 ```
 
 ## Periodic Pose Estimation and ControlData
-Periodically on the robot, the ```RobotState.java``` class takes all the information in from its suppliers, and calculates everything the robot needs to know. For example:
+Periodically on the robot, the ```RobotState.java``` class takes all the information in from its suppliers, and calculates everything the robot needs to know. For example, in a shooting game:
 * Hood Angle
 * Flywheel Speed
 * Effective Aiming Pose (for shooting on the move)
 
 This data is calculated, and stored in a record called ```ControlData```:
 
-ex. (```ControlData``` from FRC 190 2024 robot, Snapback)
+Example: ControlData record for FRC 190 2024 robots
 ```java
 public static record ControlData(
-      Rotation2d robotAngle,
-      double radialVelocity,
-      double shooterSpeed,
-      Rotation2d shooterAngle) {}
+      Rotation2d speakerRobotAngle,
+      double speakerRadialVelocity,
+      Rotation2d speakerArmAngle,
+      FlywheelSpeeds speakerShotSpeed,
+      double ampRadialVelocity,
+      Rotation2d feedRobotAngle,
+      double feedRadialVelocity,
+      Rotation2d feedArmAngle,
+      FlywheelSpeeds feedShotSpeed,
+      boolean hasNoteLocked,
+      boolean hasNoteStaged,
+      boolean isIntaking) {}
 ```
 
 ```RobotState.java``` contains an instance of ```ControlData``` as a member variable, which is updated in the periodic method, along with the pose estimator:
 
+Example: ControlData update for FRC 190 2024 robots
 ```java
-public static void periodic() {
-    poseEstimator.updateWithTime(
-        Timer.getFPGATimestamp(), robotHeadingSupplier.get(), modulePositionSupplier.get());
-    for (int i = 0; i < visionPrimaryPosesSupplier.get().length; i++) {
-      poseEstimator.addVisionMeasurement(
-          visionPrimaryPosesSupplier.get()[i].toPose2d(),
-          visionPrimaryPoseTimestampsSupplier.get()[i],
-          camerasSupplier.get()[i].primaryStandardDeviations);
-    }
-    if (!secondaryPosesNullAlert.isActive()) {
-      try {
-        for (int i = 0; i < visionSecondaryPosesSupplier.get().length; i++) {
-          poseEstimator.addVisionMeasurement(
-              visionSecondaryPosesSupplier.get()[i].toPose2d(),
-              visionSecondaryPoseTimestampsSupplier.get()[i],
-              camerasSupplier.get()[i].secondaryStandardDeviations);
-        }
-        secondaryPosesNullAlert.set(false);
-      } catch (Exception e) {
-        secondaryPosesNullAlert.set(true);
-      }
-    }
-
-    Translation2d speakerPose =
+Translation2d speakerPose =
         AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d());
     double distanceToSpeaker =
         poseEstimator.getEstimatedPosition().getTranslation().getDistance(speakerPose);
-    Translation2d effectiveAimingPose =
+    Translation2d effectiveSpeakerAimingTranslation =
         poseEstimator
             .getEstimatedPosition()
             .getTranslation()
-            .plus(
-                robotFieldRelativeVelocitySupplier
-                    .get()
-                    .times(timeOfFlightMap.get(distanceToSpeaker)));
-    double effectiveDistanceToSpeaker = effectiveAimingPose.getDistance(speakerPose);
+            .plus(robotFieldRelativeVelocity.times(timeOfFlightMap.get(distanceToSpeaker)));
+    double effectiveDistanceToSpeaker = effectiveSpeakerAimingTranslation.getDistance(speakerPose);
 
-    Rotation2d setpointAngle = speakerPose.minus(effectiveAimingPose).getAngle();
-    double tangentialVelocity =
-        -robotFieldRelativeVelocitySupplier.get().rotateBy(setpointAngle.unaryMinus()).getY();
-    double radialVelocity = tangentialVelocity / effectiveDistanceToSpeaker;
+    Translation2d ampPose = AllianceFlipUtil.apply(FieldConstants.ampCenter);
+    double distanceToAmp =
+        poseEstimator.getEstimatedPosition().getTranslation().getDistance(ampPose);
+    Translation2d effectiveAmpAimingTranslation =
+        poseEstimator
+            .getEstimatedPosition()
+            .getTranslation()
+            .plus(robotFieldRelativeVelocity.times(timeOfFlightMap.get(distanceToAmp)));
+    double effectiveDistanceToAmp = effectiveAmpAimingTranslation.getDistance(ampPose);
+
+    Rotation2d speakerRobotAngle =
+        speakerPose
+            .minus(effectiveSpeakerAimingTranslation)
+            .getAngle()
+            .minus(Rotation2d.fromDegrees(180.0 + 3.5));
+    double speakerTangentialVelocity =
+        -robotFieldRelativeVelocity.rotateBy(speakerRobotAngle.unaryMinus()).getY();
+    double speakerRadialVelocity = speakerTangentialVelocity / effectiveDistanceToSpeaker;
+
+    Rotation2d ampRobotAngle =
+        ampPose.minus(effectiveAmpAimingTranslation).getAngle().minus(Rotation2d.fromDegrees(90.0));
+    double ampTangentialVelocity =
+        -robotFieldRelativeVelocity.rotateBy(ampRobotAngle.unaryMinus()).getY();
+    double ampRadialVelocity = ampTangentialVelocity / effectiveDistanceToAmp;
+
+    Rotation2d feedRobotAngle =
+        ampPose
+            .minus(effectiveAmpAimingTranslation)
+            .getAngle()
+            .minus(Rotation2d.fromDegrees(180.0));
+    double feedTangentialVelocity =
+        -robotFieldRelativeVelocity.rotateBy(feedRobotAngle.unaryMinus()).getY();
+    double feedRadialVelocity = feedTangentialVelocity / effectiveDistanceToAmp;
+
     controlData =
         new ControlData(
-            setpointAngle,
-            radialVelocity,
-            shooterSpeedMap.get(effectiveDistanceToSpeaker),
-            new Rotation2d(shooterAngleMap.get(effectiveDistanceToSpeaker)));
+            speakerRobotAngle,
+            speakerRadialVelocity,
+            new Rotation2d(speakerShotAngleMap.get(effectiveDistanceToSpeaker)),
+            speakerShotSpeedMap.get(effectiveDistanceToSpeaker),
+            ampRadialVelocity,
+            feedRobotAngle,
+            feedRadialVelocity,
+            new Rotation2d(feedShotAngleMap.get(effectiveDistanceToAmp)),
+            feedShotSpeedMap.get(effectiveDistanceToAmp),
+            hasNoteLocked,
+            hasNoteStaged,
+            isIntaking);
 
-    Logger.recordOutput("RobotState/Primary Poses", visionPrimaryPosesSupplier.get());
-    Logger.recordOutput("RobotState/Secondary Pose", visionSecondaryPosesSupplier.get());
-    Logger.recordOutput("RobotState/Estimated Pose", poseEstimator.getEstimatedPosition());
-    Logger.recordOutput("RobotState/ControlData/Robot Angle Setpoint", setpointAngle);
     Logger.recordOutput(
-        "RobotState/ControlData/Effective Distance to Speaker", effectiveDistanceToSpeaker);
+        "RobotState/Pose Data/Estimated Pose", poseEstimator.getEstimatedPosition());
+    Logger.recordOutput("RobotState/Pose Data/Odometry Pose", odometry.getPoseMeters());
+    Logger.recordOutput("RobotState/Pose Data/Heading Offset", headingOffset);
     Logger.recordOutput(
-        "RobotState/ControlData/Effective Aiming Pose",
-        new Pose2d(effectiveAimingPose, new Rotation2d()));
+        "RobotState/Pose Data/Effective Speaker Aiming Pose",
+        new Pose2d(effectiveSpeakerAimingTranslation, speakerRobotAngle));
+    Logger.recordOutput(
+        "RobotState/Pose Data/Effective Amp Aiming Pose",
+        new Pose2d(effectiveAmpAimingTranslation, ampRobotAngle));
+    Logger.recordOutput(
+        "RobotState/Pose Data/Effective Feed Aiming Pose",
+        new Pose2d(effectiveAmpAimingTranslation, feedRobotAngle));
+    Logger.recordOutput(
+        "RobotState/Pose Data/Effective Distance To Speaker", effectiveDistanceToSpeaker);
+    Logger.recordOutput("RobotState/Pose Data/Effective Distance To Amp", effectiveDistanceToAmp);
+
+    Logger.recordOutput(
+        "RobotState/Control Data/Speaker Robot Angle", controlData.speakerRobotAngle());
+    Logger.recordOutput("RobotState/Control Data/Speaker Arm Angle", controlData.speakerArmAngle());
+    Logger.recordOutput(
+        "RobotState/Control Data/Speaker Radial Velocity", controlData.speakerRadialVelocity());
+    Logger.recordOutput(
+        "RobotState/Control Data/Amp Radial Velocity", controlData.ampRadialVelocity());
+    Logger.recordOutput("RobotState/Control Data/Feed Robot Angle", controlData.feedRobotAngle());
+    Logger.recordOutput(
+        "RobotState/Control Data/Feed Radial Velocity", controlData.feedRadialVelocity());
+    Logger.recordOutput("RobotState/Control Data/Feed Arm Angle", controlData.feedArmAngle());
   }
 ```
+
+## Example
+
+See [Snapback and Whiplash RobotState](https://github.com/Team-190/2k24-Robot-Code/blob/main/src/main/java/frc/robot/RobotState.java)

@@ -1,5 +1,6 @@
 # AdvantageKit Standards
-This section provides standards that govern the IO inputs and implementations in robot projects.
+
+AdvantageKit is a powerful software library designed for FRC teams to assist with robot data collection, analysis, and debugging. It provides tools for logging and analyzing robot data, enabling teams to identify issues, refine control algorithms, and make data-driven improvements. For more details, see [AdvantageKit documentation](https://docs.advantagekit.org/getting-started/what-is-advantagekit/).
 
 ## IO Interfaces and Inputs
 A subsystem's IO interface is what defines the inputs that are automatically logged for that subsystem. It is important to log any information that could be useful in [Log Replay](https://docs.advantagekit.org/getting-started/what-is-advantagekit/), because any information that is not logged as an input can't be used to create new simulated outputs.
@@ -10,8 +11,8 @@ The fields that 190 logs in every subsystem's IO interface depends on the hardwa
     * Velocity (Radians/Second)
     * Applied Voltage (Volts)
     * Supply Current (Amps)
-    * Stator Current (Amps)
-    * Temperature (Celcius)
+    * Stator/Torque Current (Amps)
+    * Temperature (Celsius)
 * Pneumatic Actuators:
     * Position (boolean, true if extended, false if retracted)
 
@@ -20,35 +21,26 @@ This is not a comprehensive list, rather a starting point for input logging that
 
 Every IO interface must have a static Inputs class where all the inputs are defined and instantiated with default values. The ```@AutoLog``` annotation must be used to tell the robot code that the fields in the inputs class are to be logged. Every IO interface must also have a default ```updateInputs``` method, updates the inputs for the subsystem every loop cycle.
 
-ex. (Intake subsystem IO interface from FRC 190 2024 robot, Snapback)
-
 ```java
-package frc.robot.subsystems.intake;
+...
 
-import org.littletonrobotics.junction.AutoLog;
-
-public interface IntakeIO {
+public interface IO {
   @AutoLog
-  public static class IntakeIOInputs {
-    public Rotation2d rollersPosition = Rotation2d.fromRadians(0.0);
-    public double rollersVelocityRadPerSec = 0.0;
-    public double rollersAppliedVolts = 0.0;
-    public double rollersSupplyCurrentAmps = 0.0;
-    public double rollersStatorCurrentAmps = 0.0;
-    public double rollersTempCelcius = 0.0;
+  public static class IOInputs {
+    public Rotation2d position = new Rotation2d();
+    public double velocityRadiansPerSecond = 0.0;
+    public double appliedVolts = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double statorCurrentAmps = 0.0;
+    public double temperatureCelsius = 0.0;
 
-    public boolean leftPosition = false;
-    public boolean rightPosition = false;
+    public boolean pneumaticPosition = Value.kOff;
   }
 
-  public default void updateInputs(IntakeIOInputs inputs) {}
-
-  public default void setRollersVoltage(double volts) {}
-
-  public default void setIntakePosition(boolean isDeployed) {}
-}
-
+  public default void updateInputs(IOInputs inputs) {}
+...
 ```
+
 ## IO Implementations
 In FRC, it is often useful to abstract a subsystem's hardware away from its logic. This is useful for running multiple robots with different hardware using the same code. For example, a practice robot may be running one type of motor, whereas the competition robot may run a different type of motor. In order to run the same code on both robots, hardware abstraction is used to keep the logic the same for both robots, while switching between hardware. This is done through the use of IO implementations.
 
@@ -56,154 +48,15 @@ In FRC, it is often useful to abstract a subsystem's hardware away from its logi
 IO implementations are where actual hardware behaviors are defined. Each IO implementation must:
 * Implement its subsystem IO interface.
 * Override ```updateInputs()``` for specific hardware updates.
-* Implement hardware specific actuation.
+* Implement hardware specific actuation, using vendor libraries.
 
-ex. (Intake TalonFX IO implementation for FRC 190 2024 robot, Snapback)
-```java
-package frc.robot.subsystems.intake;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
-import frc.robot.util.Alert;
-import frc.robot.util.Alert.AlertType;
-
-public class IntakeIOTalonFX implements IntakeIO {
-  private final TalonFX rollersTalon;
-  private final Solenoid solenoid;
-
-  private final StatusSignal<Double> rollersPosition;
-  private final StatusSignal<Double> rollersVelocity;
-  private final StatusSignal<Double> rollersAppliedVolts;
-  private final StatusSignal<Double> rollersSupplyCurrent;
-  private final StatusSignal<Double> rollersStatorCurrent;
-  private final StatusSignal<Double> rollersTemperature;
-
-  private final Alert rollersDisconnectedAlert =
-      new Alert("Rollers Talon is disconnected, check CAN bus.", AlertType.ERROR);
-
-  public IntakeIOTalonFX() {
-    rollersTalon = new TalonFX(IntakeConstants.DEVICE_ID);
-    solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, IntakeConstants.SOLENOID_CHANNEL);
-
-    var config = new TalonFXConfiguration();
-    config.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
-    config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    config.Audio.AllowMusicDurDisable = true;
-    config.Audio.BeepOnBoot = false;
-    config.Audio.BeepOnConfig = false;
-
-    rollersTalon.getConfigurator().apply(config);
-
-    rollersPosition = rollersTalon.getPosition();
-    rollersVelocity = rollersTalon.getVelocity();
-    rollersAppliedVolts = rollersTalon.getMotorVoltage();
-    rollersSupplyCurrent = rollersTalon.getSupplyCurrent();
-    rollersStatorCurrent = rollersTalon.getStatorCurrent();
-    rollersTemperature = rollersTalon.getDeviceTemp();
-
-    BaseStatusSignal.setUpdateFrequencyForAll(100.0, rollersVelocity);
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, rollersPosition, rollersAppliedVolts, rollersSupplyCurrent, rollersStatorCurrent, rollersTemperature);
-    rollersTalon.optimizeBusUtilization();
-  }
-
-  @Override
-  public void updateInputs(IntakeIOInputs inputs) {
-    boolean rollersConnected =
-        BaseStatusSignal.refreshAll(
-                rollersVelocity,
-                rollersPosition,
-                rollersAppliedVolts,
-                rollersSupplyCurrent,
-                rollersStatorCurrent,
-                rollersTemperature)
-            .isOK();
-    rollersDisconnectedAlert.set(!rollersConnected);
-
-    inputs.rollersPositionRad =
-        Rotation2d.fromRadians(Units.rotationsToRadians(rollersPosition.getValueAsDouble()) / IntakeConstants.GEAR_RATIO);
-    inputs.rollersVelocityRadPerSec =
-        Units.rotationsToRadians(rollersVelocity.getValueAsDouble()) / IntakeConstants.GEAR_RATIO;
-    inputs.rollersAppliedVolts = rollersAppliedVolts.getValueAsDouble();
-    inputs.rollersSupplyCurrentAmps = rollersSupplyCurrent.getValueAsDouble();
-    inputs.rollersStatorCurrentAmps = rollersStatorCurrent.getValueAsDouble();
-    inputs.rollersTempCelcius = rollersTemperature.getValueAsDouble();
-
-    inputs.leftPosition = solenoid.get();
-  }
-
-  @Override
-  public void setRollersVoltage(double volts) {
-    rollersTalon.setControl(new VoltageOut(volts));
-  }
-
-  @Override
-  public void setIntakePosition(boolean position) {
-    solenoid.set(position);
-  }
-}
-
-```
 
 ## Simulated IO Implementations
 IO implementations can also be physics simulators. Instead of having simulation code in the subsystem, an IO implementation can be written and instantiated when running the robot code in simulation.
 
-ex. (Intake simulator IO implementation for FRC 190 2024 robot, Snapback)
+## Examples
 
-```java
-package frc.robot.subsystems.intake;
+Simple Example: [Whiplash's Intake Subsystem](https://github.com/Team-190/2k24-Robot-Code/blob/snaplash/src/main/java/frc/robot/subsystems/whiplash/intake)
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.Constants;
-
-public class IntakeIOSim implements IntakeIO {
-  private DCMotorSim motorSim =
-      new DCMotorSim(
-          IntakeConstants.MOTOR_CONFIG,
-          IntakeConstants.GEAR_RATIO,
-          IntakeConstants.MOMENT_OF_INERTIA);
-
-  private double rollersAppliedVolts = 0.0;
-  private boolean leftPosition = false;
-  private boolean rightPosition = false;
-
-  @Override
-  public void updateInputs(IntakeIOInputs inputs) {
-    motorSim.update(Constants.LOOP_PERIOD_SECS);
-
-    inputs.rollersPositionRad = Rotation2d.fromRadians(motorSim.getAngularPositionRad());
-    inputs.rollersVelocityRadPerSec = motorSim.getAngularVelocityRadPerSec();
-    inputs.rollersAppliedVolts = rollersAppliedVolts;
-    inputs.rollersSupplyCurrentAmps = Math.abs(motorSim.getCurrentDrawAmps());
-    inputs.rollersTempCelcius = 0.0;
-
-    inputs.leftPosition = leftPosition;
-    inputs.rightPosition = rightPosition;
-  }
-
-  @Override
-  public void setRollersVoltage(double volts) {
-    rollersAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
-    motorSim.setInputVoltage(rollersAppliedVolts);
-  }
-
-  @Override
-  public void setIntakePosition(boolean position) {
-    leftPosition = position;
-    rightPosition = position;
-  }
-}
-
-```
+Complex Example: [Whiplash's Arm Subsystem](https://github.com/Team-190/2k24-Robot-Code/blob/snaplash/src/main/java/frc/robot/subsystems/whiplash/arm)

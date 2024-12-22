@@ -1,5 +1,4 @@
 # Subsystem Standards
-This section provides standards that govern how subsystems are written and maintained.
 
 ## Subsystems Overview
 Subsystems split up the logic for the different parts of the robot, and control how the robot will perform the actions they are designed to do. This requires defining how the robot will interact with it's environment, whether that be in the physical world, or a physics simulation. In the real world, we do this by interacting with physical hardware, like motors, and in a physics simulation by modeling our robot's physical properties to test logic.

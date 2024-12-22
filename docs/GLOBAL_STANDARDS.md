@@ -1,5 +1,4 @@
 # Global Standards
-This section provides standards that govern the setup and maintence of robot code projects.
 
 ## Global Dependencies
 * [WPIlib](https://github.com/wpilibsuite/allwpilib) is the framework that teams use to write code for FRC robots.
