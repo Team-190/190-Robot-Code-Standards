@@ -3,13 +3,13 @@
 ## Naming Conventions and Modifiers
 All constants follow SNAKE_CASE, and all constants have the modifiers: ```public static final```.
 
-## [Constants.java](Constants.java)
+## Constants.java
 The official [WPIlib](https://github.com/wpilibsuite/allwpilib) constants file houses the different robot types, the tuning mode variable, and the robot loop cycle time. The constants file does not house specific subsystem constants, which are kept in separate constants classes.
 
 ## Subsystem Constants
 Each subsystem requires its own set of constants, however, because the robot code often services more than one robot, these constants can be different depending on the robot the code is running on.
 
-Each subsystem will have a constants file in the same directory as the subsystem. Each constant will be declared before it is instantiated, (except for any [Tunable Numbers](TUNABLE_NUMBER_STANDARDS.md) whose values are set after being initialized). Constants will be instantiated in a static block based on which robot is currently running the code. This is done with a switch statement. If a constant is the same across all robots, it is instantiated above the switch statement
+Each subsystem will have a constants file in the same directory as the subsystem. Each constant will be declared before it is instantiated, (except for any [Tunable Numbers](LOGGING_STANDARDS.md) whose values are set after being initialized). Constants will be instantiated in a static block based on which robot is currently running the code. This is done with a switch statement. If a constant is the same across all robots, it is instantiated above the switch statement
 
 Example: Serializer subsystem constants from FRC 190 2024 robot, Snapback
 
