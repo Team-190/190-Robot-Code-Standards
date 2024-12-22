@@ -1,44 +1,41 @@
 # Command Standards
-This section provides standards that govern the Commands and autonomous routines in robot projects.
 
 ## Subsystem Commands
 In order for a subsystem to be useful, they must be told to do something, this is what commands are for. Subsystems tell the actuators how to do something (ex. run at a voltage, follow a motion profile, account for feedback, etc.) while commands tell the robot to actually execute the tasks.
 
 Simple commands that only require one subsystem are located in that subsystem.
 
-ex. (Shooter command to run flywheels at set velocity on FRC 190 2024 robot, Snapback)
+Example: Running a motor at a velocity
 
 ```java
 public Command runVelocity() {
     return runEnd(
         () -> {
-          setSpinVelocity(ShooterConstants.DEFAULT_SPEED.get());
+          setSpinVelocity(SubsystemConstants.DEFAULT_SPEED.get());
         },
         () -> {
-          stop();
+          setSpinVelocity(0.0);
         });
   }
 ```
 
 These commands can be used in other places in the robot code by referencing the subsystem.
 
-ex.
 ```java
-shooter.runVelocity();
+subsystem.runVelocity();
 ```
 
 ## Subsystem Command Exceptions
 In long and complicated subsystems that have a lot of logic, it can be useful to separate commands into a different class to improve code readibility.
 
-ex. ([DriveCommands.java](https://github.com/Team-190/2k24-Robot-Code/blob/main/src/main/java/frc/robot/commands/DriveCommands.java) from FRC 190 2024 robot, Snapback)
+Example: [DriveCommands.java](https://github.com/Team-190/2k24-Robot-Code/blob/main/src/main/java/frc/robot/commands/DriveCommands.java) from FRC 190 2024 robots
 
 ## Composite Commands
 Composite commands are commands that are made up of more than one pre-defined command. They always take the form of a static factory. In general, composite commands should never be their own classes. [WPIlib](https://github.com/wpilibsuite/allwpilib) has excellent documentation on [Command Composition](https://docs.wpilib.org/en/stable/docs/software/commandbased/command-compositions.html) as well as [Command Decorators](https://docs.wpilib.org/en/2020/docs/software/commandbased/convenience-features.html) which are much more intuitive and concise.
 
 It is generally best to write commands as compositions rather than string commands together with decorators.
 
-ex.
-
+Example:
 ```java
 public static final Command getCollectCommand(Intake intake, Serializer serializer) {
     return Commands.sequence(
@@ -60,12 +57,12 @@ public static final Command getCollectCommand(Intake intake, Serializer serializ
 
 Composite commands reside in their own class called ```CompositeCommands.java```.
 
-ex. ([```CompositeCommands.java```](https://github.com/Team-190/2k24-Robot-Code/blob/main/src/main/java/frc/robot/commands/CompositeCommands.java) from FRC 190 2024 robot, Snapback)
+Example: [CompositeCommands.java](https://github.com/Team-190/2k24-Robot-Code/blob/main/src/main/java/frc/robot/commands/CompositeCommands.java) from FRC 190 2024 robots
 
 ## Button Bindings and Triggers
 Commands tell the robot to execute tasks, but in order for the robot code to schedule the command for execution, it needs to be bound to a [Trigger](https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html). Triggers tell the robot which conditions need to be met to execute commands. Triggers are always instantiated in the ```configureButtonBindings()``` method of ```RobotContainer.java```.
 
-ex. (Shoot button binding on FRC 190 2024 robot, Snapback)
+Example: Shooting a game piece
 ```java
 driver
         .rightBumper()
@@ -79,7 +76,7 @@ in this case, ```rightBumper()``` is the trigger representing the right bumper b
 
 It is worth noting that Triggers can be arbitrary by creating a new Trigger object and binding it to an event, which can then be passed into a command as a parameter.
 
-ex.
+Example: An arbitrary trigger
 ```java
 Trigger arbitraryTrigger = new Trigger(limitSwitch::get)
 ```
@@ -88,7 +85,7 @@ However, this usually isn't necessary because required subsystems get passed int
 
 Arbitrary Triggers are most useful when a condition must be met across a wide number of commands.
 
-ex. (Shoot button binding with arbitrary trigger on FRC 190 2024 robot, Snapback)
+Example: Shooting a game piece using a trigger.
 ```java
 Trigger shooterReady = new Trigger(() -> RobotState.shooterReady(hood, shooter))
 
@@ -103,7 +100,7 @@ driver
 ## Autonomous Routines
 Autonomous routines are simply composite command that are called during autonomous. Autonomous paths are loaded into the roborio when the code is deployed, and called during the autonomous period. We can follow a path using its path on the roborio.
 
-ex. (Center Two Piece autonomous routine from FRC 190 2024 robot, Snapback)
+Example: Center Two Piece autonomous routine from FRC 190 2024 robots
 
 ```java
 public static final Command centerTwoPiece(
@@ -118,3 +115,7 @@ public static final Command centerTwoPiece(
         CompositeCommands.getShootCommand(intake, serializer, kicker));
       }
 ```
+
+:::danger
+This autonomous routine may not be correct, as it uses Pathplanner rather than Choreo, if using this as a reference, do not use the ```AutoBuilder``` class if not using Pathplanner.
+:::

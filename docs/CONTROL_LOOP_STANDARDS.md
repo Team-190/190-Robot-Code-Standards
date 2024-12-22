@@ -1,7 +1,5 @@
 # Control Loop Standards
 
-This section provides standards that govern how control loops are implemented in 190 robot code.
-
 ## Feedback and PID Control
 ### Key Terms:
 * Process variable: The part of the robot being controlled. (ex. Arm position, gyro angle, etc).
@@ -9,7 +7,9 @@ This section provides standards that govern how control loops are implemented in
 * Output: The current value of the process variable.
 * Error: setpoint - output, in other words, the difference between where the mechanism is and where it should be.
 
-NOTE: ALL EXAMPLE CODE IN THIS DOCUMENT USE WPILIB CLASSES TO IMPLEMENT CONTROL LOOPS. FOR ACTUAL HARDWARE, IT IS PREFERRED TO RUN CONTROL LOOPS ON THE MOTORCONTROLLER.
+:::note
+ALL EXAMPLE CODE IN THIS DOCUMENT USE WPILIB CLASSES TO IMPLEMENT CONTROL LOOPS. FOR ACTUAL HARDWARE, IT IS PREFERRED TO RUN CONTROL LOOPS ON THE MOTOR CONTROLLERS.
+:::
 
 ### Feedback Control
 
@@ -21,7 +21,7 @@ The most common form of feedback control is a [PID controller](https://docs.wpil
 
 [WPILib](https://github.com/wpilibsuite/allwpilib) has a built in [PID Controller class](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/pidcontroller.html) that is used when implementing feedback control.
 
-ex. (PID controller to aim the robot at the speaker for FRC 190 2024 robot, Snapback)
+Example: PID controller to aim the robot at a target
 
 ```java
 PIDController aimController =
@@ -43,7 +43,7 @@ The controller calculates the next control output which is used in the calculati
 
 ## Feedforward Control
 
-In the previous example, the ```autoAimKI``` term is 0. The $K_i$ term, or the integral term of a PID controller, corrects for [steady state error](https://www.sciencedirect.com/topics/engineering/steady-state-error) in the system, which is when the controller can't reach the setpoint.
+In the previous example, the ```autoAimKI``` term is 0. The Ki term, or the integral term of a PID controller, corrects for [steady state error](https://www.sciencedirect.com/topics/engineering/steady-state-error) in the system, which is when the controller can't reach the setpoint.
 
 ![Steady State Error](images\Steady_State_Error.jpg)
 
@@ -61,7 +61,7 @@ WPILib has multiple [Feedforward classes](https://docs.wpilib.org/en/stable/docs
 
 When controlling a mechanism, it is often necessary to use both a Feedforward and Feedback controller to account for steady state error like gravity or static friction, while still controlling the mechanism to the setpoint. This is done by simply adding the PID controller output to the feedforward output.
 
-ex. (Shooter Feedforward and PID controller from FRC 190 2024 robot, Snapback)
+Example: Feedforward and PID controller
 
 ```java
 leftFeedback = new PIDController(KP.get(), 0.0, KD.get(), Constants.LOOP_PERIOD_SECS);
@@ -89,7 +89,7 @@ In FRC, it is often necessary to limit the speed or acceleration of a mechanism.
 
 WPILib has a [ProfiledPIDController class](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/profiled-pidcontroller.html) which handles the setpoint generation automatically.
 
-ex. (Hood profiled PID controller for FRC 190 2024 robot, Snapback)
+Example: Profiled PID controller
 
 ```java
 ProfiledPIDController profiledFeedback =
@@ -109,13 +109,20 @@ profiledFeedback.setGoal(position);
 
 ## Standards
 The standards for control loops are as follows:
-* All gains should be stored as [```LoggedTunableNumber```](LOGGING_STANDARDS.md) objects in the appropriate subsystem's constants file.
-    * ex. (Hood gains for FRC 190 2024 robot, Snapback)
+* All gains should be stored as a record of [```LoggedTunableNumber```](LOGGING_STANDARDS.md) objects in the appropriate subsystem's constants file.
+    * Example:
     ```java
-    public static final LoggedTunableNumber KP = new LoggedTunableNumber("Hood/Kp");
-  public static final LoggedTunableNumber KD = new LoggedTunableNumber("Hood/Kd");
-  public static final LoggedTunableNumber MAX_VELOCITY = new LoggedTunableNumber("Hood/Max Velocity");
-  public static final LoggedTunableNumber MAX_ACCELERATION = new LoggedTunableNumber("Hood/Max Acceleration");
+    public record Gains(
+      LoggedTunableNumber kp,
+      LoggedTunableNumber kd,
+      LoggedTunableNumber ks,
+      LoggedTunableNumber kg,
+      LoggedTunableNumber kv) {}
+
+    public record Constraints(
+      LoggedTunableNumber maxVelocityRadiansPerSecond,
+      LoggedTunableNumber maxAccelerationRadiansPerSecondSqaured,
+      LoggedTunableNumber goalToleranceRadians) {}
     ```
     * Make sure to initialize defaults [appropriately](CONSTANTS_STANDARDS.md).
 * For actual hardware, all control loops should be run onboard the motorcontroller. See Pheonix 6/Pro documentation for more details.
@@ -125,21 +132,22 @@ The standards for control loops are as follows:
 Figuring out what the value of each gain should be can be challenging, but with a good tuning process, it can be done methodically.
 
 ### Manual Tuning
-While tuning controllers manually, it is important to consider the units of the process variable. Consider an example of a single swerve wheel rotation controlled by raw voltage. The unit for the position of the wheel will be radians, and the unit for velocity is radians per second. Swerve wheel rotation works by wrapping the value of the rotation to between (-3.14, 3.14) radians, meaning the maximum error the wheel can experience is 3.14 radians from the setpoint. The maximum voltage the battery can supply a motor is 12 V. Armed with this information, it is plausible to estimate the order of magnitude that $K_p$ and $K_d$ should be.
+While tuning controllers manually, it is important to consider the units of the process variable. Consider an example of a single swerve wheel rotation controlled by raw voltage. The unit for the position of the wheel will be radians, and the unit for velocity is radians per second. Swerve wheel rotation works by wrapping the value of the rotation to between (-3.14, 3.14) radians, meaning the maximum error the wheel can experience is 3.14 radians from the setpoint. The maximum voltage the battery can supply a motor is 12 V. Armed with this information, it is plausible to estimate the order of magnitude that Kp and Kd should be.
 
 #### PID Controller
-1. Set $K_d$ and $K_i$ to 0.
-2. Increase $K_p$ from 0 by small increments until the mechanism starts oscillating around the setpoint.
-3. Slowly increase $K_d$ until the robot stops oscillating.
+1. Set Kd and Ki to 0.
+2. Increase Kp from 0 by small increments until the mechanism starts oscillating around the setpoint.
+3. Slowly increase Kd until the robot stops oscillating.
 
-* NOTES:
-    * If the robot is jittery when tuning, reduce $K_d$
+:::note
+    * If the robot is jittery when tuning, reduce Kd
     * If the robot experiences steady state error, consider implementing a Feedforward.
     * A PID controller is tuned well if the output gets to the setpoint quickly without oscillating (green line):
     ![PID Diagram](images\pid-overshoot-undershoop-oscillation-diagram-explain.jpg)
+:::
 
 #### PID Controller with Motion Profile
-1. Set $K_p$ $K_i$ and $K_d$ to 0.
+1. Set Kp Ki and Kd to 0.
 2. Set the maximum velocity and acceleration for the motion profile very low.
 3. Tune the PID controller until the output tracks the setpoint well.
 4. Continue this process by incrementing maximum velocity and acceleration and tuning PID until the maximum velocity and acceleration are reasonable.
@@ -151,35 +159,35 @@ While tuning controllers manually, it is important to consider the units of the 
 Fortunately, WPILib offers a relatively simple way of empirically measuring what the optimal feedforward gains should be. The SysID tutorial goes over what is needed to perform this task, however there are some standards to mention:
 
 * ```SysIDRoutine``` code should be declared as a member variable of its subsystem:
-    * ex. (Shooter SysID Routine for FRC 190 2024 robot, Snapback)
+    *  Example:
     ```java
     private final SysIdRoutine sysIdRoutine =
       new SysIdRoutine(
           new SysIdRoutine.Config(
-              Volts.of(ShooterConstants.RAMP_RATE_VOLTAGE)
-                  .per(Seconds.of(ShooterConstants.RAMP_RATE_SECONDS)),
-              Volts.of(ShooterConstants.STEP_VOLTAGE),
-              Seconds.of(ShooterConstants.SYSID_TIMEOUT),
-              (state) -> Logger.recordOutput("Shooter/SysID State", state.toString())),
+              Volts.of(SubsystemConstants.RAMP_RATE_VOLTAGE)
+                  .per(Seconds.of(SubsystemConstants.RAMP_RATE_SECONDS)),
+              Volts.of(SubsystemConstants.STEP_VOLTAGE),
+              Seconds.of(SubsystemConstants.SYSID_TIMEOUT),
+              (state) -> Logger.recordOutput("Subsystem/SysID State", state.toString())),
           new SysIdRoutine.Mechanism((volts) -> setVoltage(volts.in(Volts)), null, this));
     ```
 * The command to actually run SysID will be written as a command factory in the subsystem as follows:
-    * ex. (Shooter SysID Command for FRC 190 2024 robot, Snapback)
+    * Example:
     ```java
     public Command runSysId() {
         return Commands.sequence(
             sysIdRoutine.quasistatic(Direction.kForward),
-            Commands.waitSeconds(ShooterConstants.SYSID_DELAY),
+            Commands.waitSeconds(SubsystemConstants.SYSID_DELAY),
             sysIdRoutine.quasistatic(Direction.kReverse),
-            Commands.waitSeconds(ShooterConstants.SYSID_DELAY),
+            Commands.waitSeconds(SubsystemConstants.SYSID_DELAY),
             sysIdRoutine.dynamic(Direction.kForward),
-            Commands.waitSeconds(ShooterConstants.SYSID_DELAY),
+            Commands.waitSeconds(SubsystemConstants.SYSID_DELAY),
             sysIdRoutine.dynamic(Direction.kReverse));
     }
     ```
 * All SysID Commands should be added to the list of autonomous modes if the robot is in [Tuning Mode](LOGGING_STANDARDS.md)
 
-ex. (SysID autonomous routines for FRC 190 2024 robot, Snapback)
+Example: Autonomous chooser with shooter and drive characterization routines
 
 ```java
 if (Constants.TUNING_MODE) {
