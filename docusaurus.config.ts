@@ -8,12 +8,12 @@ const config: Config = {
   title: 'FRC 190 Code Standards',
 
   // Set the production URL of your site here
-  url: 'https://your-docusaurus-site.example.com',
-  baseUrl: '/',
+  url: 'https://team-190.github.io/',
+  baseUrl: '/190-Robot-Code-Standards/',
 
   // GitHub pages deployment config.
-  organizationName: 'FRC 190', // Usually your GitHub org/user name.
-  projectName: 'FRC 190 Code Standards', // Usually your repo name.
+  organizationName: 'Team-190', // Usually your GitHub org/user name.
+  projectName: '190-Robot-Code-Standards', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
