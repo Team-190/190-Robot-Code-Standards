@@ -5,9 +5,13 @@ The Command-Based Programming paradigm in FRC is a design pattern that structure
 ## The Command-Based Programming Model
 Command-Based Programming organizes robot code into two main components:
 
+**Superstructure** Represents a series of relevant robot states with related positions and actions. Transitions between states also have different actions applied.
+
+**Composite Commands** Represent actions controlling groups of subsystems, often commanded by the superstructure. These composites commands often change the superstructure state of the robot or call individual commands.
+
 **Subsystems** Represent the physical mechanisms of the robot (e.g., drivetrain, flywheels, arm, elevator). Subsystems encapsulate the hardware and define a set of capabilities that other parts of the robot can interact with.
 
-**Commands** Represent actions or sequences of actions that the robot performs. Commands control subsystems, but they are not directly tied to specific hardware implementations.
+**Commands** Represent actions or sequences of actions that the robot performs. Commands control individual subsystems, but they are not directly tied to specific hardware implementations.
 
 This separation of concerns makes the code easier to understand, extend, and debug.
 

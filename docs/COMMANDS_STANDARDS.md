@@ -33,7 +33,7 @@ Example: [DriveCommands.java](https://github.com/Team-190/2k24-Robot-Code/blob/m
 ## Composite Commands
 Composite commands are commands that are made up of more than one pre-defined command. They always take the form of a static factory. In general, composite commands should never be their own classes. [WPIlib](https://github.com/wpilibsuite/allwpilib) has excellent documentation on [Command Composition](https://docs.wpilib.org/en/stable/docs/software/commandbased/command-compositions.html) as well as [Command Decorators](https://docs.wpilib.org/en/2020/docs/software/commandbased/convenience-features.html) which are much more intuitive and concise.
 
-It is generally best to write commands as compositions rather than string commands together with decorators.
+It is generally best to write commands as compositions rather than string commands together with decorators. In addition, it is preferred to use the superstructure to control multiple subsystems rather than calling commands individually on each subsystem.
 
 Example:
 ```java
@@ -60,6 +60,9 @@ Composite commands reside in their own class called ```CompositeCommands.java```
 Example: [CompositeCommands.java](https://github.com/Team-190/2k24-Robot-Code/blob/main/src/main/java/frc/robot/commands/CompositeCommands.java) from FRC 190 2024 robots
 
 ## Button Bindings and Triggers
+:::note
+Not all robots need triggers. Robots such as Epsilon V3 do not use triggers at all. If working on V3 or a similar robot without triggers, ignore this section. 
+:::
 Commands tell the robot to execute tasks, but in order for the robot code to schedule the command for execution, it needs to be bound to a [Trigger](https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html). Triggers tell the robot which conditions need to be met to execute commands. Triggers are always instantiated in the ```configureButtonBindings()``` method of ```RobotContainer.java```.
 
 Example: Shooting a game piece
@@ -100,22 +103,22 @@ driver
 ## Autonomous Routines
 Autonomous routines are simply composite command that are called during autonomous. Autonomous paths are loaded into the roborio when the code is deployed, and called during the autonomous period. We can follow a path using its path on the roborio.
 
-Example: Center Two Piece autonomous routine from FRC 190 2024 robots
+Example: Climb function from Epsilon V3
 
 ```java
-public static final Command centerTwoPiece(
-      Drive drive, Intake intake, Serializer serializer, Kicker kicker, TrackingMode targetType) {
-    return Commands.sequence(
-        AutoBuilder.followPath(PathPlannerPath.fromPathFile("deploy/paths/Center to Center Wing Note")),
-        CompositeCommands.getAimSpeakerCommand(drive),
-        CompositeCommands.getShootCommand(intake, serializer, kicker),
-        CompositeCommands.getTrackNoteSpikeCommand(
-            drive, intake, serializer, AutoPathPoints.NOTE_2, targetType),
-        CompositeCommands.getAimSpeakerCommand(drive),
-        CompositeCommands.getShootCommand(intake, serializer, kicker));
-      }
+public static final Command climb(
+        V3_EpsilonSuperstructure superstructure,
+        Drive drive,
+        V3_EpsilonClimber climber,
+        V3_EpsilonIntake intake,
+        V3_EpsilonManipulator manipulator) {
+      return Commands.sequence(
+          superstructure.runGoal(V3_EpsilonSuperstructureStates.CLIMB),
+          Commands.deadline(
+              climber.releaseClimber(),
+              Commands.waitSeconds(
+                  V3_EpsilonClimberConstants.CLIMBER_TIMING_CONFIG.WAIT_AFTER_RELEASE_SECONDS())),
+          Commands.deadline(
+              climber.winchClimber(), Commands.run(drive::stop))); 
+    }
 ```
-
-:::danger
-This autonomous routine may not be correct, as it uses Pathplanner rather than Choreo, if using this as a reference, do not use the ```AutoBuilder``` class if not using Pathplanner.
-:::

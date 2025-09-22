@@ -43,11 +43,17 @@ const config: Config = {
 
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
+    colorMode: {
+      defaultMode: 'dark',
+      disableSwitch: false,
+      respectPrefersColorScheme: false,
+    },
     navbar: {
       title: '190 Code Standard',
       logo: {
         src: 'img/team190_hat_FINAL2.svg',
       },
+
       items: [
         {
           href: 'https://github.com/Team-190/190-Robot-Code-Standards',

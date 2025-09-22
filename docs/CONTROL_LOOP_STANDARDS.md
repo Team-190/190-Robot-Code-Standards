@@ -53,7 +53,7 @@ The Integral term of a PID controller is rarely used because:
 * It is reactive, meaning it reacts to the steady state error, slowing down the progression of the error to the setpoint.
 * It is prone to [Integral Windup](https://en.wikipedia.org/wiki/Integral_windup), which is when the mechanism is somehow impeded from reaching the setpoint, which causes the Integral term to rise high enough to cause the output to be too fast.
 
-When dealing with steady state error in FRC, most use a [Feedforward](https://en.wikipedia.org/wiki/Feed_forward_(control)), which predicts what the steady state error will be based on empircal measurements or theoretical system dynamics. In practice, this often means applying a constant output to a mechanism to overcome the force of gravity or static friction of the system.
+When dealing with steady state error in FRC, most use a [Feedforward](https://en.wikipedia.org/wiki/Feed_forward_(control)), which predicts what the steady state error will be based on empircal measurements or theoretical system dynamics. This system uses 3 values, kS, kV, and kA, which, respectively calculate and counter constant friction, friction due to velocity, and friction due to acceleration. In practice, this often means applying a constant output to a mechanism to overcome the force of gravity or static friction of the system.
 
 WPILib has multiple [Feedforward classes](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/feedforward.html) which are used for implementing Feedforward control.
 
