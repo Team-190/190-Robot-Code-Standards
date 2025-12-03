@@ -14,6 +14,7 @@ These dependencies should be present in the ```build.gradle``` file in each robo
 * Classes and Enumerations should follow PascalCase.
 * Variables should follow camelCase.
 * Constants should follow SNAKE_CASE.
+* Variables should have any relevant unit in the name, for example ```intakeTemperatureCelcius```.
 
 ### Object Instantiation
 Objects should be declared and instantiated separately. Static variables should be instantiated in static blocks, while all other variables should be instantiated in a constructor, regardless of reliance on parameters:

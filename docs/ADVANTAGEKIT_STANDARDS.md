@@ -8,13 +8,18 @@ A subsystem's IO interface is what defines the inputs that are automatically log
 The fields that 190 logs in every subsystem's IO interface depends on the hardware used in that subsystem:
 * Motors:
     * Position ([Rotation2d](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/transformations.html#rotation2d))
-    * Velocity (Radians/Second)
+    * Velocity (Radians / Second)
+    * Acceleration (Radians/ Second Squared)
     * Applied Voltage (Volts)
     * Supply Current (Amps)
     * Stator/Torque Current (Amps)
     * Temperature (Celsius)
 * Pneumatic Actuators:
     * Position (boolean, true if extended, false if retracted)
+* PID related (only use if the motor needs a PID):
+    * Goal
+    * Setpoint
+    * Error
 
 
 This is not a comprehensive list, rather a starting point for input logging that will be sufficient for most subsystems.

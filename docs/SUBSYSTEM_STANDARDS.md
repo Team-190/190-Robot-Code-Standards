@@ -6,12 +6,14 @@ Subsystems split up the logic for the different parts of the robot, and control 
 Each subsystem must:
 
 * Extend ```SubsystemBase```.
-* Override the ```periodic()``` method.
+* Override the ```periodic()``` method if the superstructure does not use it.
     * Update IO implementation with inputs - this must come before processing the inputs.
     * Process the subsystem inputs.
 * Contain all logic for that subsystem.
 * Contain all necessary command factories.
-* Not include any [constants](CONSTANTS_STANDARDS.md).
+* Includes any [constants](CONSTANTS_STANDARDS.md) in a seperate file.
+* Includes an IO and IO Sim file as an interface for the subsystem.
+* Includes a TalonFX file for the motor, implementing the IO and using its methods.
 
 Robot code runs once per loop cycle, usually 20 ms (50 Hz). When the robot is running, each subclass of ```SubsystemBase``` runs it's periodic method. The periodic method is where we tell the robot what to do, and under what conditions to do it.
 
@@ -27,6 +29,7 @@ Each subsystem has to declare the variables it will use within itself. In the in
 
 * IO implementation to interface with hardware/physics simulator.
 * IO inputs to output to log file.
+    * Note that these IO inputs should be directly referenced instead of called with a getter
 * Timer to track how long the intake possesses 2 game pieces.
 * isIntaking Logic variable.
 
