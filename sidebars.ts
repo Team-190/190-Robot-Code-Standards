@@ -45,12 +45,7 @@ const sidebars: SidebarsConfig = {
         'ROBOTSTATE_STANDARDS',
       ],
     },
-    'ADVANTAGEKIT_STANDARDS',
-    'SUBSYSTEM_STANDARDS',
-    'COMMANDS_STANDARDS',
     'CONTROL_LOOP_STANDARDS',
-    'LOGGING_STANDARDS',
-    'ROBOTSTATE_STANDARDS',
     'CONSTANTS_STANDARDS'
   ],
 };
