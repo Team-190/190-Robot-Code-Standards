@@ -28,27 +28,27 @@ const sidebars: SidebarsConfig = {
       items: [
         'README',
         'GLOBAL_STANDARDS',
-        'ROBOT_CODE_OVERVIEW',
       ],
     },
     {
       type: 'category',
-      label: 'Structure',
+      label: 'Robot Code Structure',
       link: {
         type: 'generated-index'
       },
       items: [
+                'ROBOT_CODE_OVERVIEW',
         'ADVANTAGEKIT_STANDARDS',
         'SUBSYSTEM_STANDARDS',
         'COMMANDS_STANDARDS',
         'LOGGING_STANDARDS',
         'ROBOTSTATE_STANDARDS',
+        'SUPERSTRUCTURE_STANDARDS'
       ],
     },
     'CONTROL_LOOP_STANDARDS',
     'CONSTANTS_STANDARDS',
-    'SUPERSTRUCTURE_STANDARDS',
-    'EXAMPLES',
+    'GOMPEILIB'
   ],
 };
 

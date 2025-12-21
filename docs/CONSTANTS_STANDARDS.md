@@ -9,7 +9,7 @@ The official [WPIlib](https://github.com/wpilibsuite/allwpilib) constants file h
 ## Subsystem Constants
 Each subsystem requires its own set of constants, however, because the robot code often services more than one robot, these constants can be different depending on the robot the code is running on.
 
-Each subsystem will have a constants file in the same directory as the subsystem. Each constant will be declared before it is instantiated, (except for any [Tunable Numbers](LOGGING_STANDARDS.md) whose values are set after being initialized). Constants will be instantiated in a static block based on which robot is currently running the code. This is done with a switch statement. If a constant is the same across all robots, it is instantiated above the switch statement. Constants, in general, should not use a getter, unless it is a ```TunableNumber```.
+Each subsystem will have a constants file in the same directory as the subsystem. Each constant will be declared before it is instantiated, (except for any [Tunable Numbers](robotcode/LOGGING_STANDARDS.md) whose values are set after being initialized). Constants will be instantiated in a static block based on which robot is currently running the code. This is done with a switch statement. If a constant is the same across all robots, it is instantiated above the switch statement. Constants, in general, should not use a getter, unless it is a ```TunableNumber```.
 
 Example: Serializer subsystem constants from FRC 190 2024 robot, Snapback
 
