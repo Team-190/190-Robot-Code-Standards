@@ -46,7 +46,9 @@ const sidebars: SidebarsConfig = {
       ],
     },
     'CONTROL_LOOP_STANDARDS',
-    'CONSTANTS_STANDARDS'
+    'CONSTANTS_STANDARDS',
+    'SUPERSTRUCTURE_STANDARDS',
+    'EXAMPLES',
   ],
 };
 
