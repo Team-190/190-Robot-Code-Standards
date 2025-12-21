@@ -1,4 +1,4 @@
-# Control Loop Standards
+# Control Loops
 
 ## Feedback and PID Control
 ### Key Terms:

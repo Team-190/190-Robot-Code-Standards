@@ -1,4 +1,4 @@
-# Constants Standards
+# Constants
 
 ## Naming Conventions and Modifiers
 All constants follow SNAKE_CASE, and all constants have the modifiers: ```public static final```.

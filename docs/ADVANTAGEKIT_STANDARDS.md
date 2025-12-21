@@ -1,4 +1,4 @@
-# AdvantageKit Standards
+# AdvantageKit
 
 AdvantageKit is a powerful software library designed for FRC teams to assist with robot data collection, analysis, and debugging. It provides tools for logging and analyzing robot data, enabling teams to identify issues, refine control algorithms, and make data-driven improvements. For more details, see [AdvantageKit documentation](https://docs.advantagekit.org/getting-started/what-is-advantagekit/).
 
@@ -9,7 +9,7 @@ The fields that 190 logs in every subsystem's IO interface depends on the hardwa
 * Motors:
     * Position ([Rotation2d](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/transformations.html#rotation2d))
     * Velocity (Radians / Second)
-    * Acceleration (Radians/ Second Squared)
+    * Acceleration (Radians / Second Squared)
     * Applied Voltage (Volts)
     * Supply Current (Amps)
     * Stator/Torque Current (Amps)
@@ -21,6 +21,7 @@ The fields that 190 logs in every subsystem's IO interface depends on the hardwa
     * Setpoint
     * Error
 
+For more complex subsystems, the Position, Velocity, and Acceleration inputs represent the rotation of the mechanism, rather than the actuator. Furthermore, for prismatic subsystems such as elevators or telescopes, those three inputs should use linear units representing the state of the current extension.
 
 This is not a comprehensive list, rather a starting point for input logging that will be sufficient for most subsystems.
 
@@ -59,9 +60,3 @@ IO implementations are where actual hardware behaviors are defined. Each IO impl
 
 ## Simulated IO Implementations
 IO implementations can also be physics simulators. Instead of having simulation code in the subsystem, an IO implementation can be written and instantiated when running the robot code in simulation.
-
-## Examples
-
-Simple Example: [Whiplash's Intake Subsystem](https://github.com/Team-190/2k24-Robot-Code/blob/snaplash/src/main/java/frc/robot/subsystems/whiplash/intake)
-
-Complex Example: [Whiplash's Arm Subsystem](https://github.com/Team-190/2k24-Robot-Code/blob/snaplash/src/main/java/frc/robot/subsystems/whiplash/arm)

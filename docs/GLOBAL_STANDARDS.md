@@ -3,13 +3,14 @@
 ## Global Dependencies
 * [WPIlib](https://github.com/wpilibsuite/allwpilib) is the framework that teams use to write code for FRC robots.
 * [AdvantageKit](https://github.com/Mechanical-Advantage/AdvantageKit) is a logging framework created by [FRC team 6328](https://www.thebluealliance.com/team/6328/) which has been released for public use.
-* [Gversion](https://github.com/lessthanoptimal/gversion-plugin) is an [AdvantageKit](https://github.com/Mechanical-Advantage/AdvantageKit) dependency that creates the [```BuildConstants.java```] file which is important for log replay.
+* [Gversion](https://github.com/lessthanoptimal/gversion-plugin) is an [AdvantageKit](https://github.com/Mechanical-Advantage/AdvantageKit) dependency that creates the ```BuildConstants.java``` file which is important for log replay.
 * [Lombok](https://projectlombok.org/) is an annotation based java library that helps reduce boilerplate code by automatically generating getters, setters, etc.
 * [Spotless](https://github.com/diffplug/spotless) is a code formatter that automatically formats the entire project when compiled.
+* [GomeiLib](https://github.com/Team-190/GompeiLib) is a custom library developed by FRC 19 in an attempt to reduce the amount of rewritten code from year to year.
 
 These dependencies should be present in the ```build.gradle``` file in each robot project.
 
-## Classes
+## Data
 ### Naming Conventions
 * Classes and Enumerations should follow PascalCase.
 * Variables should follow camelCase.
@@ -64,19 +65,3 @@ Measurement | Unit
 |Voltage|Volts|
 |Current|Amps|
 |Temperature|Celcius|
-
-190 uses radians per second for the following reasons:
-
-* **Consistency with Trigonometric Functions**
-
-  Radians are a natural unit of measurement when dealing with trigonometric functions such as sine and cosine. In calculus and physics, many formulas and equations involving angles are expressed in terms of radians. Using radians per second for angular velocity maintains consistency with these mathematical principles.
-
-* **Uniformity in Physics Equations**
-  
-  In many physics equations, angular velocity appears alongside other quantities such as angular acceleration, torque, and moment of inertia. When using radians per second, these equations become simpler and more elegant, avoiding the need for conversion factors or adjustments.
-
-* **Precision and Accuracy**
-  
-  Radians per second offer higher precision and accuracy compared to RPM, especially when dealing with small angles or high-speed rotations. Since radians are based on the ratio of the arc length to the radius of a circle, they provide a more precise measure of angular displacement.
-
-Overall, while RPM may be more intuitive in the context of FRC, radians per second are preferred in code due to their consistency, simplicity, and compatibility with mathematical principles.

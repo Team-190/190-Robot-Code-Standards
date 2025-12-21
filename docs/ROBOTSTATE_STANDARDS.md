@@ -1,4 +1,4 @@
-# Robot State Standards
+# Robot State
 
 The ```RobotState.java``` class is used for multiple things:
 * Localization
