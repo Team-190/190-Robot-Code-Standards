@@ -11,7 +11,7 @@ To run GompeiLib, generate a GitHub **Personal Access Token (Classic)**.
 * Name the token IE: GompeiLib
 * Select 'read:packages' under 'write:packages'
 
-![Token Gen Selection](docs/images/Access%20Token%20Settings.png)
+![Token Gen Selection](images/Access%20Token%20Settings.png)
 * **Click Generate token(scroll down) and COPY THIS TOKEN AND STORE IT IN A SAFE LOCATION! You will NOT be able to see it again.**
 
 ## Create gradle.properties file
