@@ -27,7 +27,8 @@ const sidebars: SidebarsConfig = {
     'CONTROL_LOOP_STANDARDS',
     'LOGGING_STANDARDS',
     'ROBOTSTATE_STANDARDS',
-    'CONSTANTS_STANDARDS'
+    'CONSTANTS_STANDARDS',
+    'GOMPEI_LIB_GEN'
   ],
 };
 
