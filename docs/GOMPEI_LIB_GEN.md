@@ -17,15 +17,21 @@ To run GompeiLib, generate a GitHub **Personal Access Token (Classic)**.
 ## Create gradle.properties file
 
 * Open / Create '.gradle/gradle.properties' file in your home directory
-  * **Linux/Unix**: ~/.gradle/gradle.properties.txt
-  * **Windows**: C:\Users\insert_username\\.gradle\gradle.properties.txt
-  * Create 'gradle.properties' file as a .txt if you don't have one already
+  * **Linux/Unix**: ~/.gradle/gradle.properties
+  * **Windows**: C:\Users\<insert_username>\\.gradle\gradle.properties
+    * Open '.gradle' Folder > Click 3 Dots '. . .' on top bar > Click **Options** > Click **View** tab > Unselect **Hide extensions for known file types** > Click **Apply**
+  * Create 'gradle.properties' file as a .txt (remove the .txt in the file name) if you don't have one already
 * Add the following lines, replacing the placeholders with your GitHub username and the generated token
 ```
 gpr.user=<GIT_USERNAME>
 gpr.key=<GENERATED_TOKEN>
 ```
+**EXAMPLE:**
+```
+gpr.user=frc-190
+gpr.key=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
+```
 
 ## Test Generated Token
 
-* Build robot code with GompeiLib to see if your generated token works
+* Build robot code with GompeiLib to see if your generated token works or if you followed the steps correctly.
