@@ -185,7 +185,7 @@ Fortunately, WPILib offers a relatively simple way of empirically measuring what
             sysIdRoutine.dynamic(Direction.kReverse));
     }
     ```
-* All SysID Commands should be added to the list of autonomous modes if the robot is in [Tuning Mode](robotcode/LOGGING_STANDARDS.md)
+* All SysID Commands should be added to the list of autonomous modes if the robot is in [Tuning Mode](LOGGING_STANDARDS.md)
 
 Example: Autonomous chooser with shooter and drive characterization routines
 
