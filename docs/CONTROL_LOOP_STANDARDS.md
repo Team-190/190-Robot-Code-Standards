@@ -1,4 +1,4 @@
-# Control Loop Standards
+# Control Loops
 
 ## Feedback and PID Control
 ### Key Terms:
@@ -109,7 +109,7 @@ profiledFeedback.setGoal(position);
 
 ## Standards
 The standards for control loops are as follows:
-* All gains should be stored as a record of [```LoggedTunableNumber```](LOGGING_STANDARDS.md) objects in the appropriate subsystem's constants file.
+* All gains should be stored as a record of [```LoggedTunableNumber```](robotcode/LOGGING_STANDARDS.md) objects in the appropriate subsystem's constants file.
     * Example:
     ```java
     public record Gains(
@@ -185,7 +185,7 @@ Fortunately, WPILib offers a relatively simple way of empirically measuring what
             sysIdRoutine.dynamic(Direction.kReverse));
     }
     ```
-* All SysID Commands should be added to the list of autonomous modes if the robot is in [Tuning Mode](LOGGING_STANDARDS.md)
+* All SysID Commands should be added to the list of autonomous modes if the robot is in [Tuning Mode](robotcode/LOGGING_STANDARDS.md)
 
 Example: Autonomous chooser with shooter and drive characterization routines
 

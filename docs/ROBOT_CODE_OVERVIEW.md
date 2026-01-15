@@ -1,13 +1,9 @@
 # FRC Code Overview
 
+## The Command-Based Programming Model
 The Command-Based Programming paradigm in FRC is a design pattern that structures robot code into highly modular and testable units. By discretizing robot hardware through subsystems, it becomes possible to define complex behaviors far easier than if all mechanism code was in one place.
 
-## The Command-Based Programming Model
 Command-Based Programming organizes robot code into two main components:
-
-**Superstructure** Represents a series of relevant robot states with related positions and actions. Transitions between states also have different actions applied.
-
-**Composite Commands** Represent actions controlling groups of subsystems, often commanded by the superstructure. These composites commands often change the superstructure state of the robot or call individual commands.
 
 **Subsystems** Represent the physical mechanisms of the robot (e.g., drivetrain, flywheels, arm, elevator). Subsystems encapsulate the hardware and define a set of capabilities that other parts of the robot can interact with.
 
@@ -24,13 +20,13 @@ Hardware abstraction is the practice of creating an interface layer between the 
 
 * **Easy Adaptation to Hardware Changes:** Robots often evolve, with components being swapped or upgraded during development or between seasons. With hardware abstraction, adapting to new hardware becomes straightforward, by replacing the underlying implementation while leaving subsystem logic and commands untouched.
 
-Structuring Subsystems for Hardware Abstraction
+## Structuring Subsystems for Hardware Abstraction
 Subsystems are designed to define the robot's functional behavior without being tied to specific hardware. This is achieved by separating the following layers:
 
-* **Hardware Interface:** The hardware interface defines a contract for how the subsystem interacts with its hardware components. It specifies what the subsystem needs to do (e.g., set motor speeds, read sensor values) but not how these actions are implemented.
-* **Physical Hardware Implementation:** The physical hardware implementation fulfills the hardware interface by directly interacting with the robot's sensors and actuators (e.g., motor controllers, encoders, gyros). This layer depends on libraries like WPILib to interact with physical hardware.
+* **Control Interface:** The control interface defines a contract for how the subsystem interacts with its hardware or simulated components. It specifies what the subsystem needs to do (e.g., set motor speeds, read sensor values) but not how these actions are implemented.
+* **Physical Hardware Implementation:** The physical hardware implementation fulfills the hardware interface by directly interacting with the robot's sensors and actuators (e.g., motor controllers, encoders, gyros).
 * **Simulated Hardware Implementation:** The simulated hardware implementation provides the same interface but replaces physical interactions with computed or virtual behavior. This layer allows testing in simulation or environments without access to a robot.
-* **Subsystem Logic:** The subsystem logic defines the functional capabilities of the robot component (e.g., driving forward, turning). This layer uses the hardware interface and is agnostic to whether the hardware is real or simulated.
+* **Subsystem Logic:** The subsystem logic defines the functional capabilities of the robot component (e.g., driving forward, turning). This layer uses the control interface and is agnostic to whether the hardware is real or simulated.
 
 ## Benefits of Subsystem Hardware Abstraction
 * **Seamless Transition Between Environments:** With hardware abstraction, the same subsystem logic and commands can be used in both physical and simulated environments. This is particularly valuable for debugging and iterative development when access to a robot is limited.

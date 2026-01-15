@@ -18,12 +18,34 @@ const sidebars: SidebarsConfig = {
 
   // But you can create a sidebar manually
   tutorialSidebar: [
-    'README',
-    'GLOBAL_STANDARDS',
-    'ROBOT_CODE_OVERVIEW',
-    'ADVANTAGEKIT_STANDARDS',
-    'SUBSYSTEM_STANDARDS',
-    'COMMANDS_STANDARDS',
+    {
+      type: 'category',
+      label: 'General',
+      link: {
+        type: 'generated-index'
+      },
+      collapsed: false,
+      items: [
+        'README',
+        'GLOBAL_STANDARDS',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Robot Code Structure',
+      link: {
+        type: 'generated-index'
+      },
+      items: [
+                'ROBOT_CODE_OVERVIEW',
+        'ADVANTAGEKIT_STANDARDS',
+        'SUBSYSTEM_STANDARDS',
+        'COMMANDS_STANDARDS',
+        'LOGGING_STANDARDS',
+        'ROBOTSTATE_STANDARDS',
+        'SUPERSTRUCTURE_STANDARDS'
+      ],
+    },
     'CONTROL_LOOP_STANDARDS',
     'LOGGING_STANDARDS',
     'ROBOTSTATE_STANDARDS',

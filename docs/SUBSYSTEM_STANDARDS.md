@@ -1,4 +1,8 @@
-# Subsystem Standards
+# Subsystems
+
+:::danger
+This page discusses subsystems that are not part of a superstructure system. For information about superstructure subsystems, see the superstructure section of this document
+:::
 
 ## Subsystems Overview
 Subsystems split up the logic for the different parts of the robot, and control how the robot will perform the actions they are designed to do. This requires defining how the robot will interact with it's environment, whether that be in the physical world, or a physics simulation. In the real world, we do this by interacting with physical hardware, like motors, and in a physics simulation by modeling our robot's physical properties to test logic.
@@ -11,9 +15,7 @@ Each subsystem must:
     * Process the subsystem inputs.
 * Contain all logic for that subsystem.
 * Contain all necessary command factories.
-* Includes any [constants](CONSTANTS_STANDARDS.md) in a seperate file.
-* Includes an IO and IO Sim file as an interface for the subsystem.
-* Includes a TalonFX file for the motor, implementing the IO and using its methods.
+* Separate any [constants](CONSTANTS_STANDARDS.md) in a seperate file.
 
 Robot code runs once per loop cycle, usually 20 ms (50 Hz). When the robot is running, each subclass of ```SubsystemBase``` runs it's periodic method. The periodic method is where we tell the robot what to do, and under what conditions to do it.
 
@@ -29,7 +31,6 @@ Each subsystem has to declare the variables it will use within itself. In the in
 
 * IO implementation to interface with hardware/physics simulator.
 * IO inputs to output to log file.
-    * Note that these IO inputs should be directly referenced instead of called with a getter
 * Timer to track how long the intake possesses 2 game pieces.
 * isIntaking Logic variable.
 
@@ -51,12 +52,12 @@ After declaring the variables the subsystem needs, they need to be instantiated.
 
 ```java
 public WhiplashIntake(WhiplashIntakeIO io) {
-    this.io = io;
-    inputs = new WhiplashIntakeIOInputsAutoLogged();
+  this.io = io;
+  inputs = new WhiplashIntakeIOInputsAutoLogged();
 
-    doubleTimer = new Timer();
-    isIntaking = false;
-  }
+  doubleTimer = new Timer();
+  isIntaking = false;
+}
 ```
 :::tip
 To improve readability, it is generally best to instantiate variables in the order they are declared.
@@ -68,46 +69,46 @@ The intake subsystem periodically has to:
 
 ```java
 @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Intake", inputs);
+public void periodic() {
+  io.updateInputs(inputs);
+  Logger.processInputs("Intake", inputs);
 
-    if (hasNoteLocked() && !hasNoteStaged()) {
-      io.setTopVoltage(-3.0);
-      doubleTimer.stop();
-      doubleTimer.reset();
-    }
-
-    if (hasNoteLocked() && hasNoteStaged() && doubleTimer.get() <= 3.0) {
-      io.setTopVoltage(-1.0);
-    }
-
-    if (hasNoteLocked() && hasNoteStaged() && doubleTimer.get() <= 0.0) {
-      io.setTopVoltage(0.0);
-      doubleTimer.start();
-    }
-
-    if (doubleTimer.get() >= 0.0 && !hasNoteStaged() && !hasNoteLocked()) {
-      io.setTopVoltage(0.0);
-      doubleTimer.stop();
-      doubleTimer.reset();
-    }
-
-    if (hasNoteLocked() && hasNoteStaged() && doubleTimer.get() >= 3.0) {
-      io.setTopVoltage(12.0);
-    }
-
-    if (inputs.middleSensor && !inputs.finalSensor) {
-      io.setTopVoltage(-1.0);
-      io.setBottomVoltage(1.0);
-      io.setAcceleratorVoltage(1.0);
-    } else if (inputs.finalSensor) {
-      io.setBottomVoltage(0.0);
-      io.setAcceleratorVoltage(0.0);
-    }
-
-    Logger.recordOutput("Intake/Timer", doubleTimer.get());
+  if (hasNoteLocked() && !hasNoteStaged()) {
+    io.setTopVoltage(-3.0);
+    doubleTimer.stop();
+    doubleTimer.reset();
   }
+
+  if (hasNoteLocked() && hasNoteStaged() && doubleTimer.get() <= 3.0) {
+    io.setTopVoltage(-1.0);
+  }
+
+  if (hasNoteLocked() && hasNoteStaged() && doubleTimer.get() <= 0.0) {
+    io.setTopVoltage(0.0);
+    doubleTimer.start();
+  }
+
+  if (doubleTimer.get() >= 0.0 && !hasNoteStaged() && !hasNoteLocked()) {
+    io.setTopVoltage(0.0);
+    doubleTimer.stop();
+    doubleTimer.reset();
+  }
+
+  if (hasNoteLocked() && hasNoteStaged() && doubleTimer.get() >= 3.0) {
+    io.setTopVoltage(12.0);
+  }
+
+  if (inputs.middleSensor && !inputs.finalSensor) {
+    io.setTopVoltage(-1.0);
+    io.setBottomVoltage(1.0);
+    io.setAcceleratorVoltage(1.0);
+  } else if (inputs.finalSensor) {
+    io.setBottomVoltage(0.0);
+    io.setAcceleratorVoltage(0.0);
+  }
+
+  Logger.recordOutput("Intake/Timer", doubleTimer.get());
+}
 ```
 
 :::danger
@@ -117,6 +118,7 @@ Inputs must be updated before they are processed, otherwise the inputs in the lo
 Subsystems can also define methods to expose inputs to other places in the code that require the subsystem:
 
 ```java
+  ...
   public boolean hasNoteLocked() {
     return inputs.finalSensor;
   }
@@ -128,12 +130,14 @@ Subsystems can also define methods to expose inputs to other places in the code 
   public boolean isIntaking() {
     return isIntaking;
   }
+  ...
 ```
 
 In cases where the subsystem needs to react to user input or other parts of the robot, we define ```Command``` structures that can be bound to events that occur elsewhere in our code:
 
 ```java
-  public Command intake() {
+...
+public Command intake() {
     return Commands.sequence(
             Commands.runOnce(() -> isIntaking = true),
             Commands.parallel(
@@ -166,6 +170,7 @@ In cases where the subsystem needs to react to user input or other parts of the 
             () -> io.setAcceleratorVoltage(12.0), () -> io.setAcceleratorVoltage(0.0))
         .withTimeout(0.25);
   }
+  ...
 ```
 :::info
 These types of commands are called factory commands.
@@ -174,10 +179,4 @@ These types of commands are called factory commands.
 see [Commands Standards](COMMANDS_STANDARDS.md) for more information about commands.
 :::
 
-Full file found here: [Whiplash Intake Subsystem](https://github.com/Team-190/2k24-Robot-Code/blob/snaplash/src/main/java/frc/robot/subsystems/whiplash/intake/WhiplashIntake.java)
-
-## Other Examples
-
-[Whiplash's arm subsystem](https://github.com/Team-190/2k24-Robot-Code/blob/snaplash/src/main/java/frc/robot/subsystems/whiplash/arm/WhiplashArm.java) is an example of motion profiled closed loop position control of a Single Jointed Arm.
-
-[Whiplash's shooter subsystem](https://github.com/Team-190/2k24-Robot-Code/blob/snaplash/src/main/java/frc/robot/subsystems/whiplash/shooter/WhiplashShooter.java) is an example of motion profiled closed loop velocity control of a flywheel shooter.
+Full subsystem found here: [Whiplash Intake Subsystem](https://github.com/Team-190/2k24-Robot-Code/blob/snaplash/src/main/java/frc/robot/subsystems/whiplash/intake/WhiplashIntake.java)

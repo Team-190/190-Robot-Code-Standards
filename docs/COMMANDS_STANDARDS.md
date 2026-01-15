@@ -1,4 +1,8 @@
-# Command Standards
+# Commands
+
+:::danger
+This page discusses commands that are not part of a superstructure system. For information about superstructure commands, see the superstructure section of this document
+:::
 
 ## Subsystem Commands
 In order for a subsystem to be useful, they must be told to do something, this is what commands are for. Subsystems tell the actuators how to do something (ex. run at a voltage, follow a motion profile, account for feedback, etc.) while commands tell the robot to actually execute the tasks.
