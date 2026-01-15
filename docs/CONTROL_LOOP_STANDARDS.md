@@ -109,7 +109,7 @@ profiledFeedback.setGoal(position);
 
 ## Standards
 The standards for control loops are as follows:
-* All gains should be stored as a record of [```LoggedTunableNumber```](robotcode/LOGGING_STANDARDS.md) objects in the appropriate subsystem's constants file.
+* All gains should be stored as a record of [```LoggedTunableNumber```](LOGGING_STANDARDS.md) objects in the appropriate subsystem's constants file.
     * Example:
     ```java
     public record Gains(
