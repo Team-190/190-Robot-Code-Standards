@@ -50,7 +50,8 @@ const sidebars: SidebarsConfig = {
     'LOGGING_STANDARDS',
     'ROBOTSTATE_STANDARDS',
     'CONSTANTS_STANDARDS',
-    'GOMPEI_LIB_GEN'
+    'GOMPEI_LIB_GEN',
+    'SOTM'
   ],
 };
 
