@@ -187,7 +187,35 @@ This represents a point that is:
 ### Transformation
 A **transformation** describes how to convert a pose or point from one coordinate frame to another. Transformations combine both translation and rotation into a single operation.
 
-#### Linear Algebra Primer for Transformations
+While transformations are technically represented as matrices, in practice, they are often represented as vectors with translation and rotation components. This representation is more compact and intuitive for computation and reasoning in robotics.
+
+$$
+T_{2D} =
+\begin{bmatrix}
+x \\
+y \\
+\theta
+\end{bmatrix}
+
+T_{3D} =
+\begin{bmatrix}
+x \\
+y \\
+z \\
+\alpha \\
+\beta \\
+\gamma
+\end{bmatrix}
+$$
+
+Using this interpretation, a pose and a transform are similar constructs, the difference is that a pose represents a position and orientation in a coordinate system, and a transform represents a movement from one coordinate system to another.
+
+Reviews for how to represent transformations as matrices are shown below
+
+<details>
+<summary>
+Linear Algebra Review
+</summary>
 Transformations rely on basic linear algebra concepts. Here’s a brief summary:
 
 1. **Vectors**
@@ -243,6 +271,7 @@ Transformations rely on basic linear algebra concepts. Here’s a brief summary:
    $$
 
 > Summary: Matrices are a compact way to encode rotations, translations, and other linear operations. By representing points as vectors and using matrix multiplication, we can apply complex motion and orientation changes with simple algebra.
+</details>
 
 <details>
 <summary>
@@ -440,45 +469,6 @@ $$
 </details>
 
 ---
-
-#### Example
-A 2D transformation for a robot at $(x, y) = (3, 4)$ with heading $\theta = \pi/4$:
-
-$$
-T =
-\begin{bmatrix}
-\frac{\sqrt{2}}{2} & -\frac{\sqrt{2}}{2} & 3 \\
-\frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2} & 4 \\
-0 & 0 & 1
-\end{bmatrix}
-$$
-
-This matrix can be used to transform points from the robot’s local frame into the field frame, which is crucial for predicting where shots will land while the robot is moving.
-
-:::important
-While transformations are technically represented as matrices, in practice, they are often represented as vectors with translation and rotation components. This representation is more compact and intuitive for computation and reasoning in robotics.
-
-$$
-T_{2D} =
-\begin{bmatrix}
-x \\
-y \\
-\theta
-\end{bmatrix}
-
-T_{3D} =
-\begin{bmatrix}
-x \\
-y \\
-z \\
-\alpha \\
-\beta \\
-\gamma
-\end{bmatrix}
-$$
-
-Using this interpretation, a pose and a transform are similar constructs, the difference is that a pose represents a position and orientation in a coordinate system, and a transform represents a movement from one coordinate system to another.
-:::
 
 ## Shooting Theory
 
