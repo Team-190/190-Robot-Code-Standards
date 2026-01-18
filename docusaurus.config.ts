@@ -68,14 +68,13 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
 
-  stylesheets: [
+stylesheets: [
     {
-      href: 'https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css',
+      href: 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css',
       type: 'text/css',
-      integrity: 'sha384-no6+qq8FyDyUjWzWW0sr2mFHOaPtZpvUolqk2vh5Tdt3L+4anWWNWAo2F3Q9Ja5g',
-      crossorigin: 'anonymous',
     },
   ],
+
 };
 
 export default config;

@@ -22,13 +22,15 @@ A **translation** describes linear movement through space, how an object’s pos
 #### 2D Translation
 In a 2D plane (such as the field surface), a translation is represented as a vector:
 
-$
+$$
 \text{t} =
-\begin{bmatrix}
+\left[
+\begin{matrix}
 x \\
 y
-\end{bmatrix}
-$
+\end{matrix}
+\right]
+$$
 
 - **x** represents movement along the field’s horizontal axis  
 - **y** represents movement along the field’s vertical axis  
@@ -38,25 +40,28 @@ This is typically used to describe a robot’s position or velocity on the field
 #### 3D Translation
 In 3D space, an additional axis is included:
 
-$\text{t} =
-\begin{bmatrix}
+$$
+\text{t} =
+\left[
+\begin{matrix}
 x \\
 y \\
 z
-\end{bmatrix}
-$
+\end{matrix}
+\right]
+$$
 
 - **z** represents height, which is useful when modeling projectile motion or shooter exit points.
 
 #### Example
-$
+$$
 \text{t} =
 \begin{bmatrix}
 3 \\
 4 \\
 5
 \end{bmatrix}
-$
+$$
 
 This translation represents:
 - 3 units of movement in the x direction  
@@ -70,9 +75,9 @@ A **rotation** describes how an object’s orientation changes in space. While t
 #### 2D Rotation
 In 2D, rotation is represented by a single angle:
 
-$
+$$
 \text{r} = \theta
-$
+$$
 
 - $\theta$ is typically measured in radians  
 - A positive value usually represents counterclockwise rotation  
@@ -82,14 +87,14 @@ For a robot, this often corresponds to the robot’s heading on the field.
 #### 3D Rotation
 In 3D space, rotation can be described using three angles:
 
-$
+$$
 \text{r} =
 \begin{bmatrix}
 \alpha \\
 \beta \\
 \gamma
 \end{bmatrix}
-$
+$$
 
 These angles represent rotations about three perpendicular axes:
 - $\alpha$: rotation about the x-axis (roll)  
@@ -100,14 +105,14 @@ These angles represent rotations about three perpendicular axes:
 > in which the rotations are applied (commonly roll → pitch → yaw).
 
 #### Example
-$
+$$
 \text{r} =
 \begin{bmatrix}
 0 \\
 \frac{\pi}{4} \\
 \pi
 \end{bmatrix}
-$
+$$
 
 This rotation represents:
 - 0 radians of roll rotation
