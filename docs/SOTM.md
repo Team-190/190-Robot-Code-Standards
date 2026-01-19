@@ -14,6 +14,87 @@ This document assumes the robot uses a **swerve drive**, which allows independen
 ## Key Terms
 To reason about shooting while moving, we need a precise way to describe where things are on the field and how they are oriented. This document uses standard geometric representations commonly found in robotics, physics, and control systems.
 
+<details>
+<summary>TLDR</summary>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Translation (2D)</td>
+      <td>
+        $t = \begin{bmatrix} x \\ y \end{bmatrix}$
+      </td>
+    </tr>
+    <tr>
+      <td>Translation (3D)</td>
+      <td>
+        $t = \begin{bmatrix} x \\ y \\ z \end{bmatrix}$
+      </td>
+    </tr>
+    <tr>
+      <td>Rotation (2D)</td>
+      <td>
+        $r = \theta$
+      </td>
+    </tr>
+    <tr>
+      <td>Rotation (3D)</td>
+      <td>
+        $
+        r = \begin{bmatrix}
+        \alpha & \text{(roll)} \\
+        \beta & \text{(pitch)} \\
+        \gamma & \text{(yaw)}
+        \end{bmatrix}
+        $
+      </td>
+    </tr>
+    <tr>
+      <td>Pose (2D)</td>
+      <td>
+        $P = \begin{bmatrix} x \\ y \\ \theta \end{bmatrix}$
+      </td>
+    </tr>
+    <tr>
+      <td>Pose (3D)</td>
+      <td>
+        $
+        P = \begin{bmatrix}
+        x \\ y \\ z \\
+        \alpha \\ \beta \\ \gamma
+        \end{bmatrix}
+        $
+      </td>
+    </tr>
+    <tr>
+      <td>Transform (2D)</td>
+      <td>
+        $T = \begin{bmatrix} x \\ y \\ \theta \end{bmatrix}$
+      </td>
+    </tr>
+    <tr>
+      <td>Transform (3D)</td>
+      <td>
+        $
+        T = \begin{bmatrix}
+        x \\ y \\ z \\
+        \alpha \\ \beta \\ \gamma
+        \end{bmatrix}
+        $
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</details>
+
+
 ---
 
 ### Translation
@@ -196,7 +277,9 @@ x \\
 y \\
 \theta
 \end{bmatrix}
+$$
 
+$$
 T_{3D} =
 \begin{bmatrix}
 x \\
@@ -275,7 +358,7 @@ Transformations rely on basic linear algebra concepts. Here’s a brief summary:
 
 <details>
 <summary>
-While the full 2D and 3D transformation are shown below for completeness, many shooting problems reduce to a planar yaw-only case, which significantly simplifies the math while preserving the same geometric structure.
+2D and 3D Transformation Matrix Definitions
 </summary>
 #### 2D Transformation
 In 2D space, a transformation is represented using a **3×3 homogeneous transformation matrix**. This matrix encodes both rotation and translation in a single structure:
@@ -288,9 +371,9 @@ r & t \\
 \end{bmatrix}
 $$
 
-- \(r\) is a 2×2 rotation matrix  
-- \(t\) is a 2×1 translation vector  
-- The bottom row enables the use of homogeneous coordinates  
+- \(r\) is a 2×2 rotation matrix
+- \(t\) is a 2×1 translation vector
+- The bottom row enables the use of homogeneous coordinates
 
 ---
 
@@ -306,8 +389,8 @@ y
 $$
 
 This represents a shift of:
-- \(x\) units along the x-axis  
-- \(y\) units along the y-axis  
+- \(x\) units along the x-axis
+- \(y\) units along the y-axis
 
 ---
 
@@ -383,9 +466,9 @@ r & t \\
 \end{bmatrix}
 $$
 
-- \(r\) is a 3×3 rotation matrix  
-- \(t\) is a 3×1 translation vector  
-- The bottom row enables the use of homogeneous coordinates  
+- \(r\) is a 3×3 rotation matrix
+- \(t\) is a 3×1 translation vector
+- The bottom row enables the use of homogeneous coordinates
 
 ---
 
@@ -402,17 +485,17 @@ z
 $$
 
 This represents a shift of:
-- \(x\) units along the x-axis  
-- \(y\) units along the y-axis  
-- \(z\) units along the z-axis  
+- \(x\) units along the x-axis
+- \(y\) units along the y-axis
+- \(z\) units along the z-axis
 
 ---
 
 ##### Rotation Component
 The rotation matrix \(r\) is constructed from **Euler angles**:
-- $\alpha$: roll (rotation about the x-axis)  
-- $\beta$: pitch (rotation about the y-axis)  
-- $\gamma$: yaw (rotation about the z-axis)  
+- $\alpha$: roll (rotation about the x-axis)
+- $\beta$: pitch (rotation about the y-axis)
+- $\gamma$: yaw (rotation about the z-axis)
 
 This document assumes the rotations are applied in the following order:
 
@@ -468,20 +551,160 @@ $$
 
 </details>
 
+:::important
+### A note about transformation notation
+
+In this document, transforms are notated with a $T_{AB}$ where $B$ is the source (original) frame, and $A$ is the result (target) frame. For example, $T_{SR}$ is a transformation from **robot space** into **shooter space**, i.e., it maps points expressed in the robot frame to coordinates expressed in the shooter frame
+:::
+
 ---
 
-## Shooting Theory
+## Shooting Theory - No Turret
 
-The theory we will use to shoot on the move is a continuation of a common stationary shooting technique that we are going to call *Pose Based Shooting*.
+The theory we will use to shoot on the move is an extension of a common stationary shooting technique that we are going to call *Pose Based Shooting*.
 
 ### Pose Based Shooting
-The theory behind pose based shooting is that if we know the translation of whatever we want to aim at, and the translation of our robot on the field, we can solve for the pose **(translation and rotation)** for the shooter to aim at 
 
-From the game manual, we know the translation of the goal relative to the field: $t_{goal}$.
+The theory behind pose based shooting is that if we know the translation of whatever we want to aim at, and the translation of our robot on the field, we can solve for the pose **(translation and rotation)** for the shooter to aim at.
 
-The robot knows where it is on the field from keeping track of its wheel's positions over time (odometry) and any updates it gets from cameras: $t_{robot}$
-
-Because both of these poses are relative to the field, we can determine what angle our shooter needs to point at to aim at the goal:
+From the game manual, we know the translation of the goal relative to the field:
 
 $$
+\mathbf{t}_{\text{goal}} =
+\begin{bmatrix}
+x_{\text{goal}} \\
+y_{\text{goal}}
+\end{bmatrix}
 $$
+
+The robot knows where it is on the field from keeping track of its wheel positions over time (odometry) and any updates it gets from cameras:
+
+$$
+\mathbf{t}_{\text{robot}} =
+\begin{bmatrix}
+x_{\text{robot}} \\
+y_{\text{robot}}
+\end{bmatrix}
+$$
+
+Because both of these translations are relative to the field, we can compute the translation vector from the robot to the goal:
+
+$$
+\mathbf{t}_{\text{goal->robot}} =
+\mathbf{t}_{\text{goal}} - \mathbf{t}_{\text{robot}}
+$$
+
+The angle the shooter must rotate to aim at the goal is then:
+
+$$
+\theta_{\text{shooter}} =
+\tan^{-1}\left(\frac{
+y_{\text{goal}} - y_{\text{robot}}}
+{x_{\text{goal}} - x_{\text{robot}}}
+\right)
+$$
+
+### Offset Shooter
+
+The above aiming method assumes the shooter is in the center of the robot. If the shooter is in the center of the robot, aiming the robot at the target also aims the shooter at the target. However, in certain circumstances, a shooter may not be in the center of the robot due to space constraints. In that case, we can use a transformation ($T_{SR}$) that maps points from **robot space** to **shooter space**.
+
+We define the shooter offset as a **rigid-body transform** relative to the robot frame:
+
+$$
+T_{SR} =
+\begin{bmatrix}
+x_{SR} \\
+y_{SR} \\
+\theta_{SR}
+\end{bmatrix}
+$$
+
+Here:
+
+- $\begin{bmatrix} x_{SR} \\ y_{SR} \end{bmatrix}$ is the translational offset of the shooter from the robot center.  
+- $\theta_{SR}$ is the orientation of the shooter relative to the robot frame.
+
+From the game manual, we know the translation of the goal relative to the field:
+
+$$
+\mathbf{t}_{\text{goal}} =
+\begin{bmatrix}
+x_{\text{goal}} \\
+y_{\text{goal}}
+\end{bmatrix}
+$$
+
+The robot knows its pose on the field from keeping track of its wheel positions over time (odometry) and any updates it gets from cameras.
+
+$$
+P_{robot} =
+\begin{bmatrix}
+x_{\text{robot}} \\
+y_{\text{robot}} \\
+\theta_{robot}
+\end{bmatrix}
+$$
+
+Because the robot pose is relative to the origin of the field reference frame, we can express the pose of the robot on the field as a transform from the field origin to the  robot:
+
+$$
+T_{FR} =
+\begin{bmatrix}
+x_{\text{robot}} \\
+y_{\text{robot}} \\
+\theta_{robot}
+\end{bmatrix}
+$$
+
+Then:
+
+$$
+T_{FS} = T_{FR} \cdot T_{SR}
+$$
+
+And:
+
+$$
+t_{FS} = \begin{bmatrix} x_{FS} \\ y_{FS} \end{bmatrix} = \text{translation part of } T_{FS}
+$$
+
+Then the goal relative to the shooter in field coordinates is:
+
+$$
+\mathbf{t}_{\text{goal to shooter in field coordinates}} =
+\begin{bmatrix}
+x_{\text{goal}} \\
+y_{\text{goal}}
+\end{bmatrix}
+-
+\begin{bmatrix}
+x_{\text{shooter}} \\
+y_{\text{shooter}}
+\end{bmatrix}
+$$
+
+The field-relative angle the shooter must point is:
+
+$$
+\theta_{\text{shooter field}} =
+\tan^{-1}\left(\frac{
+y_{\text{goal}} - y_{\text{shooter}}}
+{x_{\text{goal}} - x_{\text{shooter}}}
+\right)
+$$
+
+> This is the angle the shooter should point **in field coordinates**.
+
+To align the shooter with the goal, the robot must rotate so that the shooter’s field angle matches the target angle.  
+
+The robot’s required orientation is:
+
+$$
+\theta_{\text{robot to aim}} = \theta_{\text{SF}} - \theta_{SR}
+$$
+
+Here:
+
+- $\theta_{\text{robot to aim}}$ is the robot’s orientation in the field that will make the shooter point at the goal.  
+- $\theta_{\text{SF}}$ is the angle from shooter to goal in field coordinates.  
+- $\theta_{SR}$ is the shooter’s fixed orientation relative to the robot.
