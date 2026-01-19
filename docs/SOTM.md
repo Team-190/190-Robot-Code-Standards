@@ -328,7 +328,8 @@ This is the **field-relative velocity of the shooter at the moment of firing**.
 Finally, compensate for the shooter’s motion during the projectile flight time $\Delta t$:
 
 $$
-\mathbf{p}_{\text{adj\_target}} = \mathbf{p}_{\text{target}} - \mathbf{v}_{\text{shooter}} \cdot \Delta t
+\boxed{
+\mathbf{p}_{\text{adj\_target}} = \mathbf{p}_{\text{target}} - \mathbf{v}_{\text{shooter}} \cdot \Delta t}
 $$
 
 This is the **adjusted target position in field coordinates** that the shooter should aim at to hit the nominal target while moving.
