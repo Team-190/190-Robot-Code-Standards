@@ -37,7 +37,7 @@ const sidebars: SidebarsConfig = {
         type: 'generated-index'
       },
       items: [
-                'ROBOT_CODE_OVERVIEW',
+        'ROBOT_CODE_OVERVIEW',
         'ADVANTAGEKIT_STANDARDS',
         'SUBSYSTEM_STANDARDS',
         'COMMANDS_STANDARDS',
@@ -50,7 +50,7 @@ const sidebars: SidebarsConfig = {
     'LOGGING_STANDARDS',
     'ROBOTSTATE_STANDARDS',
     'CONSTANTS_STANDARDS',
-    'GOMPEI_LIB_GEN',
+    'GOMPEILIB',
     'SOTM'
   ],
 };
