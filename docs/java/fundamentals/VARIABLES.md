@@ -89,10 +89,6 @@ and initialized the same way as a primitive variable.
 ```java
 String frcYear = "2026"; // Declaring a String with name frcYear and string literal of 2026
 ```
-<img
-src={useBaseUrl("img/images/javafundamentals/string-java.gif")}
-alt="string-java"
-/>
 
 For more information about objects, such as Strings, check out the Object-Oriented Programming section.
 
