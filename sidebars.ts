@@ -5,6 +5,13 @@ const sidebars: SidebarsConfig = {
     'README',
     {
       type: 'category',
+      label: 'Documentation',
+      className: 'sidebarSectionHeader',
+      collapsible: false,
+      collapsed: false,
+      items: [
+    {
+      type: 'category',
       label: 'FRC Hardware',
       link: {
         type: 'generated-index',
@@ -484,6 +491,23 @@ const sidebars: SidebarsConfig = {
           collapsed: true,
           items: []
         }
+      ],
+    },
+      ],
+    },
+    {
+      type: 'html',
+      value: '<hr style="margin: 0.5rem 0; border-color: #606770;" />',
+      defaultStyle: true,
+    },
+    {
+      type: 'category',
+      label: 'Training',
+      className: 'sidebarSectionHeader',
+      collapsible: false,
+      collapsed: false,
+      items: [
+        'training/xrp_java_course/XRP_SETUP',
       ],
     },
   ],

@@ -28,3 +28,8 @@
   --ifm-color-primary-lightest: #3cad6e;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.sidebarSectionHeader > .menu__list-item-collapsible > a.menu__link {
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+}
