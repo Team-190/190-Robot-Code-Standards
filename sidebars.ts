@@ -508,6 +508,7 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [
         'training/xrp_java_course/XRP_SETUP',
+        'training/xrp_java_course/WPILIB_INSTALLATION'
       ],
     },
   ],
