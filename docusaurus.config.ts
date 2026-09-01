@@ -8,8 +8,8 @@ const config: Config = {
   title: 'FRC 190 Software Knowledge Base',
 
   // Set the production URL of your site here
-  url: 'https://team-190.github.io/',
-  baseUrl: '/190-Software-Knowledge-Base/',
+  url: 'https://frc190code.com',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
   organizationName: 'Team-190', // Usually your GitHub org/user name.
