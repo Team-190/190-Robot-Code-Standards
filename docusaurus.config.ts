@@ -56,9 +56,16 @@ const config: Config = {
 
       items: [
         {
-          href: 'https://github.com/Team-190/190-Software-Knowledge-Base',
-          label: 'GitHub',
+          href: 'https://www.frc190.com',
           position: 'right',
+          className: 'navbar-frc190-link',
+          'aria-label': 'FRC 190 website',
+        },
+        {
+          href: 'https://github.com/Team-190/190-Software-Knowledge-Base',
+          position: 'right',
+          className: 'navbar-github-link',
+          'aria-label': 'GitHub repository',
         },
       ],
     },
