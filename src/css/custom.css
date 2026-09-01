@@ -34,10 +34,22 @@
   color: var(--ifm-color-primary);
 }
 
+.navbar {
+  height: auto;
+  min-height: var(--ifm-navbar-height);
+}
+
 .navbar-frc190-link,
 .navbar-github-link {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  font-size: 0.75rem;
+  line-height: 1;
 }
 
 .navbar-frc190-link svg,
@@ -49,8 +61,8 @@
 .navbar-github-link:before {
   content: '';
   display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;

@@ -50,22 +50,19 @@ const config: Config = {
     },
     navbar: {
       title: '190 Software Knowledge Base',
-      logo: {
-        src: 'img/team190_hat_FINAL2.svg',
-      },
 
       items: [
         {
           href: 'https://www.frc190.com',
+          label: 'FRC 190',
           position: 'right',
           className: 'navbar-frc190-link',
-          'aria-label': 'FRC 190 website',
         },
         {
           href: 'https://github.com/Team-190/190-Software-Knowledge-Base',
+          label: 'GitHub',
           position: 'right',
           className: 'navbar-github-link',
-          'aria-label': 'GitHub repository',
         },
       ],
     },
