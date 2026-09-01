@@ -153,5 +153,5 @@ Without data types, the computer would have no idea how to interpret the raw bit
 | long    | Integer   | 8 bytes | -9,223,372,036,854,775,808 | 9,223,372,036,854,775,807 |
 | float   | Decimal   | 4 bytes |                            |                           |
 | double  | Decimal   | 8 bytes |                            |                           |
+| char    | Character | 2 bytes |                            |                           |
 | boolean | Boolean   | 1 byte  |                            |                           |
-| char    | Character | 1 byte  |                            |                           |
