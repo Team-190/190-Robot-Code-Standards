@@ -154,4 +154,4 @@ Without data types, the computer would have no idea how to interpret the raw bit
 | float   | Decimal   | 4 bytes |                            |                           |
 | double  | Decimal   | 8 bytes |                            |                           |
 | char    | Character | 2 bytes |                            |                           |
-| boolean | Boolean   | 1 byte  |                            |                           |
+| boolean | Boolean   | Differs |                            |                           |
