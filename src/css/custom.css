@@ -61,14 +61,15 @@
 .navbar-github-link:before {
   content: '';
   display: inline-block;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
 }
 
 .navbar-frc190-link:before {
+  width: 105px;
   background-image: url('/img/team190_hat_FINAL2.svg');
 }
 

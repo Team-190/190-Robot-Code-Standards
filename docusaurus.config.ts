@@ -6,6 +6,7 @@ import rehypeKatex from 'rehype-katex';
 
 const config: Config = {
   title: 'FRC 190 Software Knowledge Base',
+  favicon: 'img/team190_hat_FINAL2.svg',
 
   // Set the production URL of your site here
   url: 'https://frc190code.com',
