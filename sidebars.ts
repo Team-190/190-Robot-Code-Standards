@@ -511,7 +511,8 @@ const sidebars: SidebarsConfig = {
         'training/xrp_java_course/WPILIB_INSTALLATION',
         'training/xrp_java_course/GITTING_STARTED',
         'training/xrp_java_course/MAKING_IT_MOVE',
-        'training/xrp_java_course/DATA_DATA_EVERYWHERE'
+        'training/xrp_java_course/DATA_DATA_EVERYWHERE',
+        'training/xrp_java_course/WHAT_ABOUT_DISTANCE'
       ],
     },
   ],
